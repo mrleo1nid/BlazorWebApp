@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using BlazorWebApp.Shared.Auth;
 using BlazorWebApp.Shared.Models;
 
 namespace BlazorWebApp.Server.Data

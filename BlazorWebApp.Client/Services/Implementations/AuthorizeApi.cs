@@ -11,6 +11,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using BlazorWebApp.Client.Services.Contracts;
+using BlazorWebApp.Shared.Auth;
 
 namespace BlazorWebApp.Client.Services.Implementations
 {

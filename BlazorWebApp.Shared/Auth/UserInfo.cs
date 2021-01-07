@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using BlazorWebApp.Shared.Models;
 
-namespace BlazorWebApp.Shared.Autorization
+namespace BlazorWebApp.Shared.Auth
 {
     public class UserInfo
     {

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BlazorWebApp.Shared.Autorization
+namespace BlazorWebApp.Shared.Auth
 {
     public class ApplicationUser : IdentityUser<Guid>
     {

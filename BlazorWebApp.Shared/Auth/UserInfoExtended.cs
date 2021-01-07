@@ -4,7 +4,8 @@ using System.Text;
 
 namespace BlazorWebApp.Shared.Auth
 {
-    public class UserInfoExtended
+    public class UserInfoExtended : UserInfo
     {
+
     }
 }

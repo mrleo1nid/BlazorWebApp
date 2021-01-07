@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
-namespace BlazorWebApp.Shared.Autorization
+namespace BlazorWebApp.Shared.Auth
 {
     public class LoginParameters
     {

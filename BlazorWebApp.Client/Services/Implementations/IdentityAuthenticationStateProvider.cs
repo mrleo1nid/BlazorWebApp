@@ -10,6 +10,7 @@ using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using BlazorWebApp.Client.Services.Contracts;
+using BlazorWebApp.Shared.Auth;
 
 namespace BlazorWebApp.Client.States
 {
