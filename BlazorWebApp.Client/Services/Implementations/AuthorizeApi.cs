@@ -12,6 +12,7 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using BlazorWebApp.Client.Services.Contracts;
 using BlazorWebApp.Shared.Auth;
+using BlazorWebApp.Shared.Helpers;
 
 namespace BlazorWebApp.Client.Services.Implementations
 {
@@ -48,14 +49,13 @@ namespace BlazorWebApp.Client.Services.Implementations
 
         public async Task<UserInfo> GetUserInfo()
         {
-            var result = await _httpClient.GetFromJsonAsync<UserInfo>("api/Authorize/UserInfo");
             var res = await _httpClient.GetStringAsync("api/Authorize/UserInfo");
-            return result;
+            return await JsonSerealizeHelper.Deserialize<UserInfo>(res);
         }
         public async Task<UserInfoExtended> GetUserInfoExtended()
         {
-            var result = await _httpClient.GetFromJsonAsync<UserInfoExtended>("api/Authorize/UserInfoExtended");
-            return result;
+            var res = await _httpClient.GetStringAsync("api/Authorize/UserInfoExtended");
+            return await JsonSerealizeHelper.Deserialize<UserInfoExtended>(res);
         }
     }
 }
