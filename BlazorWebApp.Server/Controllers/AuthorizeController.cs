@@ -72,24 +72,35 @@ namespace BlazorWebApp.Server.Controllers
         {
             var info = await BuildUserInfo();
             return info;
-        } 
-
+        }
+        [Authorize]
+        [HttpGet]
+        public async Task<UserInfoExtended> UserInfoExtended()
+        {
+            var info = await BuildUserInfo() as UserInfoExtended;
+            return info;
+        }
 
         private async Task<UserInfo>  BuildUserInfo()
         {
-            var user = await _userManager.GetUserAsync(HttpContext.User);
-            return new UserInfo
+            UserInfo info = new UserInfo
             {
                 IsAuthenticated = User.Identity.IsAuthenticated,
-                Email = user.Email,
-                UserName = User.Identity.Name, 
-                UserId = user.Id,
-                RegisterDateTime = user.RegisterDateTime,
+                UserName = User.Identity.Name,
                 ExposedClaims = User.Claims
                     //Optionally: filter the claims you want to expose to the client
                     //.Where(c => c.Type == "test-claim")
                     .ToDictionary(c => c.Type, c => c.Value)
             };
+
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            if (user!=null)
+            {
+                info.Email = user.Email;
+                info.RegisterDateTime = user.RegisterDateTime;
+                info.UserId = user.Id;
+            }
+            return info;
         }
     }
 }

@@ -50,6 +50,11 @@ namespace BlazorWebApp.Client.States
             return _userInfoCache;
         }
 
+        public async Task<UserInfoExtended> GetUserInfoExtended()
+        {
+            return await _authorizeApi.GetUserInfoExtended();
+        }
+
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
             var identity = new ClaimsIdentity();

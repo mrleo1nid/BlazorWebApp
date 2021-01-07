@@ -13,5 +13,6 @@ namespace BlazorWebApp.Client.Services.Contracts
         Task Register(RegisterParameters registerParameters);
         Task Logout();
         Task<UserInfo> GetUserInfo();
+        Task<UserInfoExtended> GetUserInfoExtended();
     }
 }

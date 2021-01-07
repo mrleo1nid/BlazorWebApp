@@ -49,6 +49,12 @@ namespace BlazorWebApp.Client.Services.Implementations
         public async Task<UserInfo> GetUserInfo()
         {
             var result = await _httpClient.GetFromJsonAsync<UserInfo>("api/Authorize/UserInfo");
+            var res = await _httpClient.GetStringAsync("api/Authorize/UserInfo");
+            return result;
+        }
+        public async Task<UserInfoExtended> GetUserInfoExtended()
+        {
+            var result = await _httpClient.GetFromJsonAsync<UserInfoExtended>("api/Authorize/UserInfoExtended");
             return result;
         }
     }
