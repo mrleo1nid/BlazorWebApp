@@ -1,0 +1,41 @@
+﻿@page "/profile"
+@inject IdentityAuthenticationStateProvider authStateProvider
+@attribute [Authorize]
+
+
+    <h3>Profile</h3>
+    <Field Horizontal="true">
+        <FieldLabel ColumnSize="ColumnSize.IsFull.OnTablet.Is2.OnDesktop">Id пользователя</FieldLabel>
+        <FieldBody ColumnSize="ColumnSize.IsFull.OnTablet.Is10.OnDesktop">
+            <TextEdit Text="@info.UserId.ToString()" ReadOnly="true" />
+        </FieldBody>
+    </Field>
+    <Field Horizontal="true">
+        <FieldLabel ColumnSize="ColumnSize.IsFull.OnTablet.Is2.OnDesktop">Имя пользователя</FieldLabel>
+        <FieldBody ColumnSize="ColumnSize.IsFull.OnTablet.Is10.OnDesktop">
+            <TextEdit Text="@info.UserName" ReadOnly="true" />
+        </FieldBody>
+    </Field>
+    <Field Horizontal="true">
+        <FieldLabel ColumnSize="ColumnSize.IsFull.OnTablet.Is2.OnDesktop">Дата регистрации</FieldLabel>
+        <FieldBody ColumnSize="ColumnSize.IsFull.OnTablet.Is10.OnDesktop">
+            <TextEdit Text="@info.RegisterDateTime.ToString("F")" ReadOnly="true" />
+        </FieldBody>
+    </Field>
+    <Field Horizontal="true">
+        <FieldLabel ColumnSize="ColumnSize.IsFull.OnTablet.Is2.OnDesktop">Email</FieldLabel>
+        <FieldBody ColumnSize="ColumnSize.IsFull.OnTablet.Is10.OnDesktop">
+            <TextEdit Text="@info.Email" ReadOnly="true" />
+        </FieldBody>
+    </Field>
+
+
+    @code {
+
+        private UserInfo info;
+
+        protected override async Task OnInitializedAsync()
+        {
+            info = await authStateProvider.GetUserInfo();
+        }
+    }

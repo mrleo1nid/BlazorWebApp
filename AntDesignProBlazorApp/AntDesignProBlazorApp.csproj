@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+
+    <PropertyGroup>
+        <TargetFramework>net5</TargetFramework>
+        <RazorLangVersion>3.0</RazorLangVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="AntDesign" Version="0.5.0-*"/>
+        <PackageReference Include="AntDesign.Charts" Version="0.2.0-*"/>
+        <PackageReference Include="AntDesign.Pro.Layout" Version="0.1.0-*"/>
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="5.0.0"/>
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="5.0.0" PrivateAssets="all"/>
+        <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="5.0.0"/>
+        <PackageReference Include="System.Net.Http.Json" Version="5.0.0"/>
+    </ItemGroup>
+
+    <PropertyGroup Condition=" '$(SolutionDir)'==''">
+        <SolutionDir>./</SolutionDir>
+    </PropertyGroup>
+    
+
+    <Target Name="DebugRunGulp" BeforeTargets="DebugEnsureNodeEnv" Condition=" '$(Configuration)' == 'Debug' And Exists('$(SolutionDir)node_modules') ">
+        <Exec WorkingDirectory="$(SolutionDir)" Command="npm run gulp:pro"/>
+    </Target>
+
+    <Target Name="PublishRunGulp" AfterTargets="ComputeFilesToPublish">
+        <Exec WorkingDirectory="$(SolutionDir)" Command="npm install"/>
+        <Exec WorkingDirectory="$(SolutionDir)" Command="npm run gulp:pro"/>
+    </Target>
+</Project>

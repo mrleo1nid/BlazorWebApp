@@ -1,0 +1,56 @@
+﻿@page "/register"
+@layout LoginLayout
+@inject NavigationManager navigationManager
+@inject IdentityAuthenticationStateProvider authStateProvider
+
+<h1 class="h2 font-weight-normal login-title">
+    Дружок пирожок тобой выбранна неправильная дверь, нужен пароль
+</h1>
+
+<EditForm class="form-signin" OnValidSubmit="OnSubmit" Model="registerParameters">
+    <DataAnnotationsValidator />
+    <h4 class="font-weight-normal text-center">Создать аккаунт</h4>
+
+    <label for="inputUsername" class="sr-only">Имя пользователя</label>
+    <InputText id="inputUsername" class="form-control" placeholder="Username" autofocus @bind-Value="@registerParameters.UserName" />
+    <ValidationMessage For="@(() => registerParameters.UserName)" />
+    
+    <label for="inputUsername" class="sr-only">Email</label>
+    <InputText id="inputEmail" class="form-control" placeholder="Email" autofocus @bind-Value="@registerParameters.Email" />
+    <ValidationMessage For="@(() => registerParameters.Email)" />
+
+    <label for="inputPassword" class="sr-only">Пароль</label>
+    <InputText type="password" id="inputPassword" class="form-control" placeholder="Password" @bind-Value="@registerParameters.Password" />
+    <ValidationMessage For="@(() => registerParameters.Password)" />
+
+    <label for="inputPasswordConfirm" class="sr-only">Подтверждение пароля</label>
+    <InputText type="password" id="inputPasswordConfirm" class="form-control" placeholder="Password Confirmation" @bind-Value="@registerParameters.PasswordConfirm" />
+    <ValidationMessage For="@(() => registerParameters.PasswordConfirm)" />
+
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Создать аккаунт</button>
+
+    <label class="text-danger">@error</label>
+    <NavLink href="login">
+        <h6 class="font-weight-normal text-center">Уже есть аккаунт? Нажми сюда чтобы войти.</h6>
+    </NavLink>
+</EditForm>
+
+@functions{
+
+    RegisterParameters registerParameters { get; set; } = new RegisterParameters();
+    string error { get; set; }
+
+    async Task OnSubmit()
+    {
+        error = null;
+        try
+        {
+            await authStateProvider.Register(registerParameters);
+            navigationManager.NavigateTo("");
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        }
+    }
+}

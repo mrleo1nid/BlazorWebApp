@@ -1,0 +1,18 @@
+﻿@page "/"
+@attribute [Authorize]
+
+<AuthorizeView>
+    <Authorized>
+        <h1>Привет @context.User.Identity.Name !!</h1>
+
+        <p>Это пустая страничка.</p>
+    
+    </Authorized>
+    <Authorizing>
+        <h1>Загрузка ...</h1>
+    </Authorizing>
+</AuthorizeView>
+
+@code{
+   
+}
