@@ -32,6 +32,7 @@ namespace BlazorWebApp.Client
             builder.Services.AddScoped<IdentityAuthenticationStateProvider>();
             builder.Services.AddScoped<AuthenticationStateProvider>(s => s.GetRequiredService<IdentityAuthenticationStateProvider>());
             builder.Services.AddScoped<IAuthorizeApi, AuthorizeApi>();
+            builder.Services.AddScoped<IPawnApi, PawnApi>();
             builder.Services.AddTransient(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
             var host = builder.Build();

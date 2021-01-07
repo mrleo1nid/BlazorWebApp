@@ -1,42 +1,83 @@
 ﻿@page "/profile"
 @using BlazorWebApp.Shared.Auth
+@using BlazorWebApp.Shared.Models
 @inject IdentityAuthenticationStateProvider authStateProvider
+@inject IPawnApi IPawnApi
 @attribute [Authorize]
 
 
-    <h3>Profile</h3>
-    <Field Horizontal="true">
-        <FieldLabel ColumnSize="ColumnSize.IsFull.OnTablet.Is2.OnDesktop">Id пользователя</FieldLabel>
-        <FieldBody ColumnSize="ColumnSize.IsFull.OnTablet.Is10.OnDesktop">
-            <TextEdit Text="@info.UserId.ToString()" ReadOnly="true" />
-        </FieldBody>
-    </Field>
-    <Field Horizontal="true">
-        <FieldLabel ColumnSize="ColumnSize.IsFull.OnTablet.Is2.OnDesktop">Имя пользователя</FieldLabel>
-        <FieldBody ColumnSize="ColumnSize.IsFull.OnTablet.Is10.OnDesktop">
-            <TextEdit Text="@info.UserName" ReadOnly="true" />
-        </FieldBody>
-    </Field>
-    <Field Horizontal="true">
-        <FieldLabel ColumnSize="ColumnSize.IsFull.OnTablet.Is2.OnDesktop">Дата регистрации</FieldLabel>
-        <FieldBody ColumnSize="ColumnSize.IsFull.OnTablet.Is10.OnDesktop">
-            <TextEdit Text="@info.RegisterDateTime.ToString("F")" ReadOnly="true" />
-        </FieldBody>
-    </Field>
-    <Field Horizontal="true">
-        <FieldLabel ColumnSize="ColumnSize.IsFull.OnTablet.Is2.OnDesktop">Email</FieldLabel>
-        <FieldBody ColumnSize="ColumnSize.IsFull.OnTablet.Is10.OnDesktop">
-            <TextEdit Text="@info.Email" ReadOnly="true" />
-        </FieldBody>
-    </Field>
-
-
-    @code {
-
-        private UserInfo info;
-
-        protected override async Task OnInitializedAsync()
+<h3>Profile</h3>
+<Field Horizontal="true">
+    <FieldLabel ColumnSize="ColumnSize.IsFull.OnTablet.Is2.OnDesktop">Id пользователя</FieldLabel>
+    <FieldBody ColumnSize="ColumnSize.IsFull.OnTablet.Is10.OnDesktop">
+        <TextEdit Text="@info.UserId.ToString()" ReadOnly="true" />
+    </FieldBody>
+</Field>
+<Field Horizontal="true">
+    <FieldLabel ColumnSize="ColumnSize.IsFull.OnTablet.Is2.OnDesktop">Имя пользователя</FieldLabel>
+    <FieldBody ColumnSize="ColumnSize.IsFull.OnTablet.Is10.OnDesktop">
+        <TextEdit Text="@info.UserName" ReadOnly="true" />
+    </FieldBody>
+</Field>
+<Field Horizontal="true">
+    <FieldLabel ColumnSize="ColumnSize.IsFull.OnTablet.Is2.OnDesktop">Дата регистрации</FieldLabel>
+    <FieldBody ColumnSize="ColumnSize.IsFull.OnTablet.Is10.OnDesktop">
+        <TextEdit Text="@info.RegisterDateTime.ToString("F")" ReadOnly="true" />
+    </FieldBody>
+</Field>
+<Field Horizontal="true">
+    <FieldLabel ColumnSize="ColumnSize.IsFull.OnTablet.Is2.OnDesktop">Email</FieldLabel>
+    <FieldBody ColumnSize="ColumnSize.IsFull.OnTablet.Is10.OnDesktop">
+        <TextEdit Text="@info.Email" ReadOnly="true" />
+    </FieldBody>
+</Field>
+<Table>
+    <TableHeader>
+        <TableRow>
+            <TableHeaderCell>Полное имя</TableHeaderCell>
+            <TableHeaderCell>Фамилия</TableHeaderCell>
+            <TableHeaderCell>Имя</TableHeaderCell>
+            <TableHeaderCell>Отчество</TableHeaderCell>
+            <TableHeaderCell>Пол</TableHeaderCell>
+            <TableHeaderCell>Возраст</TableHeaderCell>
+        </TableRow>
+    </TableHeader>
+    <TableBody>
+        @foreach (var pawn in pawns)
         {
-            info = await authStateProvider.GetUserInfo();
+        <TableRow Clicked="@(()=>GetRow(pawn.Id))">
+            <TableRowHeader>@pawn.FullName</TableRowHeader>
+            <TableRowCell>@pawn.Surname</TableRowCell>
+            <TableRowCell>@pawn.Name</TableRowCell>
+            <TableRowCell>@pawn.Patronymic</TableRowCell>
+            <TableRowCell>@pawn.Sex</TableRowCell>
+            <TableRowCell>@pawn.Age</TableRowCell>
+        </TableRow>
         }
+    </TableBody>
+</Table>
+<Button Color="Color.Secondary" Clicked="@CreateRandom">Создать случайного</Button>
+@code {
+
+    private UserInfo info;
+    private List<Pawn> pawns;
+
+    protected override async Task OnInitializedAsync()
+    {
+        info = await authStateProvider.GetUserInfo();
+        pawns = new List<Pawn>();
+        pawns = await IPawnApi.GetPawnsByUserId(info.UserId);
     }
+
+    private async void CreateRandom()
+    {
+        await IPawnApi.CreateRandom();
+        pawns = new List<Pawn>();
+        pawns = await IPawnApi.GetPawnsByUserId(info.UserId);
+    }
+    private async Task GetRow(Guid pawnid)
+    {
+        var pawn = await IPawnApi.GetPawnById(pawnid);
+    }
+    
+}

@@ -13,6 +13,7 @@ using System.Linq;
 using System.Net.Mime;
 using System.Threading.Tasks;
 using BlazorWebApp.Server.Data;
+using BlazorWebApp.Server.Services;
 using BlazorWebApp.Shared.Auth;
 using BlazorWebApp.Shared.Models;
 
@@ -25,7 +26,11 @@ namespace BlazorWebApp.Server
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ApplicationDbContext>(options =>
-              options.UseSqlite("Filename=data.db"));
+              options.UseSqlite("Filename=MainData.db"));
+            services.AddDbContext<NamesDbContext>(options =>
+                options.UseSqlite("Filename=NamesData.db"));
+
+            services.AddLogging();
 
             services.AddIdentity<ApplicationUser, IdentityRole<Guid>>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -71,6 +76,9 @@ namespace BlazorWebApp.Server
                 opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
                     new[] { "application/octet-stream" });
             });
+
+            //othen services
+            services.AddScoped<PawnGeneratorService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

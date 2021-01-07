@@ -13,6 +13,7 @@ namespace BlazorWebApp.Server.Data
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>
     {
+        public DbSet<Pawn> Pawns { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
