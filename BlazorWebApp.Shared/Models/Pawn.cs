@@ -16,6 +16,9 @@ namespace BlazorWebApp.Shared.Models
         public Sex Sex { get; set; }
         public int Age { get; set; }
         public Resides Resides { get; set; }
+
+        public DateTime DateofBirth { get; set; }
+
         public Guid UserId { get; set; }
         public ApplicationUser User { get; set; }
 
@@ -40,7 +43,7 @@ namespace BlazorWebApp.Shared.Models
 
     public enum Resides
     {
-        Sity =1,
+        City =1,
         Village =2,
     }
 }

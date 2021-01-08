@@ -14,9 +14,11 @@ namespace BlazorWebApp.Server.Services
     {
         private Random random;
         private NamesDbContext _context;
+        private RandomDateTime randomDateTime;
         public PawnGeneratorService(NamesDbContext context)
         {
             random = new Random(Convert.ToInt32(DateTime.Now.Millisecond));
+            randomDateTime = new RandomDateTime();
             _context = context;
         }
 
@@ -29,6 +31,7 @@ namespace BlazorWebApp.Server.Services
             pawn = await CreatePawnPatronim(pawn);
             pawn.Resides = GenerateResides();
             pawn.Age = GenerateAge();
+            pawn.DateofBirth = GenerateBirth(pawn.Age);
             return pawn;
         }
 
@@ -184,12 +187,24 @@ namespace BlazorWebApp.Server.Services
             var res = RandomHelper.GetRandomNumberFromArrayWithProbabilities(ints, doubles, random);
             if (res == 0)
             {
-                return Resides.Sity;
+                return Resides.City;
             }
             else
             {
                 return Resides.Village;
             }
+        }
+        private DateTime GenerateBirth(int pawnears)
+        {
+            var start = randomDateTime.Next();
+            var nowmon = DateTime.Now.Month;
+            var currentear = DateTime.Now.AddYears(-pawnears).Year;
+            if (start.Month>nowmon)
+            {
+                currentear = currentear - 1;
+            }
+            
+            return new DateTime(currentear,start.Month,start.Day, start.Hour,start.Minute,start.Second);
         }
     }
     

@@ -37,8 +37,9 @@
         <TableRow>
             <TableHeaderCell>Полное имя</TableHeaderCell>
             <TableHeaderCell>Возраст</TableHeaderCell>
+            <TableHeaderCell>Дата рождения</TableHeaderCell>
             <TableHeaderCell>Пол</TableHeaderCell>
-            <TableRowCell>Происхождение</TableRowCell>
+            <TableHeaderCell>Происхождение</TableHeaderCell>
         </TableRow>
     </TableHeader>
     <TableBody>
@@ -47,15 +48,16 @@
         <TableRow>
             <TableRowHeader>@pawn.FullName</TableRowHeader>
             <TableRowCell>@pawn.Age</TableRowCell>
+            <TableRowCell>@pawn.DateofBirth.ToString("D")</TableRowCell>
             <TableRowCell>@pawn.Sex</TableRowCell>
             <TableRowCell>@pawn.Resides</TableRowCell>
             @if (authStateProvider.GetAuthenticationStateAsync().Result.User.IsInRole("admin"))
             {
                 <TableRowCell>
-                    <Button Color="Color.Danger" Loading="@updbuttonLoading" Clicked="@(()=>ChangeName( pawn.Id ))">Новое имя</Button>
+                    <Button Color="Color.Danger" Loading="@updbuttonLoading" Clicked="@(()=>ChangeName( pawn.Id ))">Имя</Button>
                 </TableRowCell>
                 <TableRowCell>
-                    <Button Color="Color.Danger" Loading="@updbuttonLoading" Clicked="@(()=>ChangeSurName( pawn.Id ))">Новая фамилия</Button>
+                    <Button Color="Color.Danger" Loading="@updbuttonLoading" Clicked="@(()=>ChangeSurName( pawn.Id ))">Фамилия</Button>
                 </TableRowCell>
             }
             <TableRowCell>
