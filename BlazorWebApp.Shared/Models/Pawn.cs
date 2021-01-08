@@ -23,11 +23,24 @@ namespace BlazorWebApp.Shared.Models
         [IgnoreDataMember]
         public string FullName { get { return $"{Surname} {Name} {Patronymic}";}}
 
+        [IgnoreDataMember]
+        public string SexToString { get
+        {
+            if (Sex == Sex.Female) return "Ж";
+            else return "М";
+        } }
+
     }
 
     public enum Sex
     {
         Male=1,
         Female=2
+    }
+
+    public enum Resides
+    {
+        Sity =1,
+        Village =2,
     }
 }

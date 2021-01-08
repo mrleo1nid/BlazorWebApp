@@ -36,18 +36,18 @@
     <TableHeader>
         <TableRow>
             <TableHeaderCell>Полное имя</TableHeaderCell>
-
             <TableHeaderCell>Возраст</TableHeaderCell>
+            <TableHeaderCell>Пол</TableHeaderCell>
         </TableRow>
     </TableHeader>
     <TableBody>
         @foreach (var pawn in pawns)
         {
-            <TableRow>
-                <TableRowHeader>@pawn.FullName</TableRowHeader>
-
-                <TableRowCell>@pawn.Age</TableRowCell>
-            </TableRow>
+        <TableRow>
+            <TableRowHeader>@pawn.FullName</TableRowHeader>
+            <TableRowCell>@pawn.Age</TableRowCell>
+            <TableRowCell>@pawn.Sex</TableRowCell>
+        </TableRow>
         }
     </TableBody>
 </Table>
@@ -81,7 +81,6 @@
     private async Task UpdatePawns(bool setupdtstate = true)
     {
         updbuttonLoading = setupdtstate;
-        pawns = new List<Pawn>();
         pawns = await IPawnApi.GetPawnsByUserId(info.UserId);
         updbuttonLoading = false;  
     }

@@ -39,6 +39,8 @@ namespace BlazorWebApp.Server.Data
 
         public static async Task InitNamesContext(NamesDbContext context)
         {
+            List<NameString> malestats = new List<NameString>();
+
             if (!context.NameStrings.Any())
             {
                 if (new FileInfo("NamesData/russian_names.json").Exists)
@@ -46,6 +48,7 @@ namespace BlazorWebApp.Server.Data
                     var names = JsonSerealizeHelper.DeserializeArrayFromFile<NameString>("NamesData/russian_names.json");
                     await context.NameStrings.AddRangeAsync(names.Where(x=>x.Sex=="Ж"));
                     await context.SaveChangesAsync();
+                    malestats.AddRange(names.Where(x => x.Sex == "М"));
                 }
             }
 
@@ -57,6 +60,10 @@ namespace BlazorWebApp.Server.Data
                     foreach (var surname in surnames)
                     {
                         if (surname.Surname.EndsWith('а'))
+                        {
+                            surname.Sex = "Ж";
+                        }
+                        else if (surname.Surname.EndsWith('я'))
                         {
                             surname.Sex = "Ж";
                         }
@@ -82,12 +89,21 @@ namespace BlazorWebApp.Server.Data
                         {
                             var trimed = line.Trim().Split('(');
                             var name = trimed[0].Trim();
+
+                            var inforow = malestats.Where(x => x.Name.Trim() == name).FirstOrDefault();
+                            int peoplecount = 0;
+                            DateTime wenDateTime = DateTime.Now;
+                            if (inforow!=null)
+                            {
+                                peoplecount = inforow.PeoplesCount;
+                                wenDateTime = inforow.WhenPeoplesCount;
+                            }
                             NameString nameString = new NameString()
                             {
                                 Name = name,
-                                PeoplesCount = 0,
+                                PeoplesCount = peoplecount,
                                 Sex = "М",
-                                WhenPeoplesCount = DateTime.Now
+                                WhenPeoplesCount = wenDateTime
                             };
                             await context.NameStrings.AddAsync(nameString);
                             await context.SaveChangesAsync();
