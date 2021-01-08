@@ -1,6 +1,7 @@
 ﻿@page "/profile"
 @using BlazorWebApp.Shared.Auth
 @using BlazorWebApp.Shared.Models
+@using System.Threading
 @inject IdentityAuthenticationStateProvider authStateProvider
 @inject IPawnApi IPawnApi
 @attribute [Authorize]
@@ -35,49 +36,58 @@
     <TableHeader>
         <TableRow>
             <TableHeaderCell>Полное имя</TableHeaderCell>
-            <TableHeaderCell>Фамилия</TableHeaderCell>
-            <TableHeaderCell>Имя</TableHeaderCell>
-            <TableHeaderCell>Отчество</TableHeaderCell>
-            <TableHeaderCell>Пол</TableHeaderCell>
+
             <TableHeaderCell>Возраст</TableHeaderCell>
         </TableRow>
     </TableHeader>
     <TableBody>
         @foreach (var pawn in pawns)
         {
-        <TableRow Clicked="@(()=>GetRow(pawn.Id))">
-            <TableRowHeader>@pawn.FullName</TableRowHeader>
-            <TableRowCell>@pawn.Surname</TableRowCell>
-            <TableRowCell>@pawn.Name</TableRowCell>
-            <TableRowCell>@pawn.Patronymic</TableRowCell>
-            <TableRowCell>@pawn.Sex</TableRowCell>
-            <TableRowCell>@pawn.Age</TableRowCell>
-        </TableRow>
+            <TableRow>
+                <TableRowHeader>@pawn.FullName</TableRowHeader>
+
+                <TableRowCell>@pawn.Age</TableRowCell>
+            </TableRow>
         }
     </TableBody>
 </Table>
-<Button Color="Color.Secondary" Clicked="@CreateRandom">Создать случайного</Button>
+<Button Color="Color.Info" Loading="@createrandbuttonLoading" Clicked="@CreateRandom">Создать случайного</Button>
+<Button Color="Color.Info" Loading="@updbuttonLoading" Clicked="@UpdatePawnsClick">Обновить</Button>
 @code {
 
     private UserInfo info;
     private List<Pawn> pawns;
+    private bool updbuttonLoading = false;
+    private bool createrandbuttonLoading = false;
 
     protected override async Task OnInitializedAsync()
     {
-        info = await authStateProvider.GetUserInfo();
         pawns = new List<Pawn>();
-        pawns = await IPawnApi.GetPawnsByUserId(info.UserId);
+        info = await authStateProvider.GetUserInfo();
+        await UpdatePawns(true);
     }
 
-    private async void CreateRandom()
+    private async Task CreateRandom()
     {
+        createrandbuttonLoading = true;
         await IPawnApi.CreateRandom();
+        await UpdatePawns(false);
+        createrandbuttonLoading = false;
+    }
+    private async Task UpdatePawnsClick()
+    {
+       await UpdatePawns(true);
+    }
+    private async Task UpdatePawns(bool setupdtstate = true)
+    {
+        updbuttonLoading = setupdtstate;
         pawns = new List<Pawn>();
         pawns = await IPawnApi.GetPawnsByUserId(info.UserId);
+        updbuttonLoading = false;  
     }
     private async Task GetRow(Guid pawnid)
     {
         var pawn = await IPawnApi.GetPawnById(pawnid);
     }
-    
+
 }

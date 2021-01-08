@@ -9,6 +9,7 @@ using BlazorWebApp.Shared.Auth;
 using BlazorWebApp.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace BlazorWebApp.Server.Controllers
 {
@@ -43,7 +44,7 @@ namespace BlazorWebApp.Server.Controllers
         [HttpGet]
         public async Task<List<Pawn>> GetPawnsByUserId(Guid userId)
         {
-            return _context.Pawns.Where(x=>x.UserId==userId).ToList();
+            return await _context.Pawns.Where(x=>x.UserId==userId).ToListAsync();
         }
         [Authorize]
         [HttpPost]

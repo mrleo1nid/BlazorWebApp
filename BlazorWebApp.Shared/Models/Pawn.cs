@@ -27,7 +27,7 @@ namespace BlazorWebApp.Shared.Models
 
     public enum Sex
     {
-        Male=0,
-        Female=1
+        Male=1,
+        Female=2
     }
 }

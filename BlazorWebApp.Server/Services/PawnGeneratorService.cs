@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using BlazorWebApp.Server.Data;
 using BlazorWebApp.Shared.Helpers;
 using BlazorWebApp.Shared.Models;
+using BlazorWebApp.Shared.NameGeneration;
 
 namespace BlazorWebApp.Server.Services
 {
@@ -21,7 +22,7 @@ namespace BlazorWebApp.Server.Services
         public async Task<Pawn> GenerateRandomPawn()
         {
             Pawn pawn = new Pawn();
-            pawn.Sex = (Sex) random.Next(1);
+            pawn.Sex = RandomHelper.GetRandomSex(random);
             pawn = CreatePawnName(pawn);
             pawn.Age = random.Next(14,70);
             return pawn;
@@ -32,33 +33,23 @@ namespace BlazorWebApp.Server.Services
             string name = string.Empty;
             if (pawn.Sex==Sex.Male)
             {
-                var namestr = _context.NameStrings.Where(x => x.Sex.Trim() == "М")
-                    .OrderBy(s => random.NextDouble())
-                    .First();
+                var namestr = RandomHelper.GetRandomObj<NameString>(random,
+                    _context.NameStrings.Where(x => x.Sex == "М").ToList());
                 pawn.Name = namestr.Name;
-                var surnamestr = _context.SurnameStrings.Where(x => x.Sex.Trim() == "М")
-                    .OrderBy(s => random.NextDouble())
-                        .First();
+                var surnamestr = RandomHelper.GetRandomObj<SurnameString>(random, _context.SurnameStrings.Where(x => x.Sex == "М").ToList());
                 pawn.Surname = surnamestr.Surname;
-                var patrstr = _context.PatronimicStrings.Where(x => x.Sex == Sex.Male)
-                    .OrderBy(s => random.NextDouble())
-                    .First();
+                var patrstr = RandomHelper.GetRandomObj<PatronimicString>(random, _context.PatronimicStrings.Where(x => x.Sex == Sex.Male).ToList());
                 pawn.Patronymic = patrstr.Patronimic;
 
             }
             else
             {
-                var namestr = _context.NameStrings.Where(x => x.Sex.Trim() == "Ж")
-                        .OrderBy(s => random.NextDouble())
-                        .First();
+                var namestr = RandomHelper.GetRandomObj<NameString>(random,
+                    _context.NameStrings.Where(x => x.Sex == "Ж").ToList());
                 pawn.Name = namestr.Name;
-                var surnamestr = _context.SurnameStrings.Where(x => x.Sex.Trim() == "Ж")
-                        .OrderBy(s => random.NextDouble())
-                        .First();
+                var surnamestr = RandomHelper.GetRandomObj<SurnameString>(random, _context.SurnameStrings.Where(x => x.Sex == "Ж").ToList());
                 pawn.Surname = surnamestr.Surname;
-                var patrstr = _context.PatronimicStrings.Where(x => x.Sex == Sex.Female)
-                    .OrderBy(s => random.NextDouble())
-                    .First();
+                var patrstr = RandomHelper.GetRandomObj<PatronimicString>(random, _context.PatronimicStrings.Where(x => x.Sex == Sex.Female).ToList());
                 pawn.Patronymic = patrstr.Patronimic;
             }
             return pawn;

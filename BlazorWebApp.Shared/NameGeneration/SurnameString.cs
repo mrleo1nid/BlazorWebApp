@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using System.Text;
+using BlazorWebApp.Shared.Models;
 using Newtonsoft.Json;
 
 namespace BlazorWebApp.Shared.NameGeneration
@@ -15,6 +17,7 @@ namespace BlazorWebApp.Shared.NameGeneration
 
         [JsonProperty("Sex")]
         public string Sex { get; set; }
+     
 
         [JsonProperty("PeoplesCount")]
         public int PeoplesCount { get; set; }
