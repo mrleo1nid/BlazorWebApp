@@ -40,6 +40,11 @@
             <TableHeaderCell>Дата рождения</TableHeaderCell>
             <TableHeaderCell>Пол</TableHeaderCell>
             <TableHeaderCell>Происхождение</TableHeaderCell>
+            @if (authStateProvider.GetAuthenticationStateAsync().Result.User.IsInRole("admin"))
+            {
+                <TableHeaderCell>Управление</TableHeaderCell>
+            }
+            <TableHeaderCell>Удалить</TableHeaderCell>
         </TableRow>
     </TableHeader>
     <TableBody>
@@ -55,8 +60,6 @@
             {
                 <TableRowCell>
                     <Button Color="Color.Danger" Loading="@updbuttonLoading" Clicked="@(()=>ChangeName( pawn.Id ))">Имя</Button>
-                </TableRowCell>
-                <TableRowCell>
                     <Button Color="Color.Danger" Loading="@updbuttonLoading" Clicked="@(()=>ChangeSurName( pawn.Id ))">Фамилия</Button>
                 </TableRowCell>
             }
