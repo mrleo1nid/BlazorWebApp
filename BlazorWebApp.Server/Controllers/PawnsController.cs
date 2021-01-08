@@ -63,5 +63,37 @@ namespace BlazorWebApp.Server.Controllers
         {
             _context.Pawns.Update(pawn);
         }
+
+        [Authorize]
+        [HttpGet]
+        public async Task RemovePawn(Guid pawnId)
+        {
+            var pawn = await _context.Pawns.FindAsync(pawnId);
+            _context.Pawns.Remove(pawn);
+            await _context.SaveChangesAsync();
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task GetNextRandomName(Guid pawnId)
+        {
+            var pawn = await _context.Pawns.FindAsync(pawnId);
+            await _pawnGenerator.LowOldName(pawn.Name);
+            pawn = await _pawnGenerator.CreatePawnName(pawn);
+            _context.Pawns.Update(pawn);
+            await _context.SaveChangesAsync();
+       
+        }
+        [Authorize]
+        [HttpGet]
+        public async Task GetNextRandomSurName(Guid pawnId)
+        {
+            var pawn = await _context.Pawns.FindAsync(pawnId);
+            await _pawnGenerator.LowOldSurName(pawn.Surname);
+            pawn = await _pawnGenerator.CreatePawnSurName(pawn);
+            _context.Pawns.Update(pawn);
+            await _context.SaveChangesAsync();
+        }
+
     }
 }

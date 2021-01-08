@@ -38,6 +38,7 @@
             <TableHeaderCell>Полное имя</TableHeaderCell>
             <TableHeaderCell>Возраст</TableHeaderCell>
             <TableHeaderCell>Пол</TableHeaderCell>
+            <TableRowCell>Происхождение</TableRowCell>
         </TableRow>
     </TableHeader>
     <TableBody>
@@ -47,6 +48,19 @@
             <TableRowHeader>@pawn.FullName</TableRowHeader>
             <TableRowCell>@pawn.Age</TableRowCell>
             <TableRowCell>@pawn.Sex</TableRowCell>
+            <TableRowCell>@pawn.Resides</TableRowCell>
+            @if (authStateProvider.GetAuthenticationStateAsync().Result.User.IsInRole("admin"))
+            {
+                <TableRowCell>
+                    <Button Color="Color.Danger" Loading="@updbuttonLoading" Clicked="@(()=>ChangeName( pawn.Id ))">Новое имя</Button>
+                </TableRowCell>
+                <TableRowCell>
+                    <Button Color="Color.Danger" Loading="@updbuttonLoading" Clicked="@(()=>ChangeSurName( pawn.Id ))">Новая фамилия</Button>
+                </TableRowCell>
+            }
+            <TableRowCell>
+                <Button Color="Color.Danger" Loading="@updbuttonLoading" Clicked="@(()=>RemovePawn( pawn.Id ))">X</Button>
+            </TableRowCell>
         </TableRow>
         }
     </TableBody>
@@ -76,17 +90,33 @@
     }
     private async Task UpdatePawnsClick()
     {
-       await UpdatePawns(true);
+        await UpdatePawns(true);
     }
     private async Task UpdatePawns(bool setupdtstate = true)
     {
         updbuttonLoading = setupdtstate;
         pawns = await IPawnApi.GetPawnsByUserId(info.UserId);
-        updbuttonLoading = false;  
+        updbuttonLoading = false;
     }
     private async Task GetRow(Guid pawnid)
     {
         var pawn = await IPawnApi.GetPawnById(pawnid);
+    }
+    private async Task ChangeName(Guid pawnid)
+    {
+        await IPawnApi.GetNextRandomName(pawnid);
+        await UpdatePawns(true);
+    }
+    private async Task ChangeSurName(Guid pawnid)
+    {
+        await IPawnApi.GetNextRandomSurName(pawnid);
+        await UpdatePawns(true);
+    }
+    private async Task RemovePawn(Guid pawnid)
+    {
+        await IPawnApi.RemovePawn(pawnid);
+        await UpdatePawns(true);
+      
     }
 
 }

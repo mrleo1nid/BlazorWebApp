@@ -13,6 +13,8 @@ namespace BlazorWebApp.Client.Services.Contracts
         Task<List<Pawn>> GetPawnsByUserId(Guid userId);
         Task CreateRandom();
         Task Edit(Pawn pawn);
-
+        Task GetNextRandomSurName(Guid pawnId);
+        Task GetNextRandomName(Guid pawnId);
+        Task RemovePawn(Guid pawnId);
     }
 }

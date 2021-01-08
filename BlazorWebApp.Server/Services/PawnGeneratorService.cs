@@ -27,11 +27,26 @@ namespace BlazorWebApp.Server.Services
             pawn = await CreatePawnName(pawn);
             pawn = await CreatePawnSurName(pawn);
             pawn = await CreatePawnPatronim(pawn);
+            pawn.Resides = GenerateResides();
             pawn.Age = GenerateAge();
             return pawn;
         }
 
-        private async Task<Pawn> CreatePawnName(Pawn pawn)
+        public async Task LowOldName(string name)
+        {
+          var namestr = await  _context.NameStrings.Where(x => x.Name == name).FirstOrDefaultAsync();
+          namestr.PeoplesCount = random.Next(50, 300);
+          _context.NameStrings.Update(namestr);
+          await _context.SaveChangesAsync();
+        }
+        public async Task LowOldSurName(string surname)
+        {
+            var surnamestr = await _context.SurnameStrings.Where(x => x.Surname == surname).FirstOrDefaultAsync();
+            surnamestr.PeoplesCount = random.Next(50, 300);
+            _context.SurnameStrings.Update(surnamestr);
+            await _context.SaveChangesAsync();
+        }
+        public async Task<Pawn> CreatePawnName(Pawn pawn)
         {
             var randListName = await _context.NameStrings
                 .Where(x => x.Sex == pawn.SexToString)
@@ -54,7 +69,7 @@ namespace BlazorWebApp.Server.Services
             pawn.Name = randListName.Where(x => x.ID == nameid).FirstOrDefault().Name;
             return pawn;
         }
-        private async Task<Pawn> CreatePawnSurName(Pawn pawn)
+        public async Task<Pawn> CreatePawnSurName(Pawn pawn)
         {
             var randListName = await _context.SurnameStrings
                 .Where(x => x.Sex == pawn.SexToString)

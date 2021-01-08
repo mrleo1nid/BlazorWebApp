@@ -15,13 +15,13 @@ namespace BlazorWebApp.Shared.Models
         public string Patronymic { get; set; }
         public Sex Sex { get; set; }
         public int Age { get; set; }
-
+        public Resides Resides { get; set; }
         public Guid UserId { get; set; }
         public ApplicationUser User { get; set; }
 
 
         [IgnoreDataMember]
-        public string FullName { get { return $"{Surname} {Name} {Patronymic}";}}
+        public string FullName { get { return $"{Name} {Patronymic} {Surname}";}}
 
         [IgnoreDataMember]
         public string SexToString { get

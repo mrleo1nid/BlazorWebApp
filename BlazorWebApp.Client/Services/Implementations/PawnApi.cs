@@ -45,5 +45,20 @@ namespace BlazorWebApp.Client.Services.Implementations
         {
 
         }
+
+        public async Task GetNextRandomSurName(Guid pawnId)
+        {
+            var res = await _httpClient.GetStringAsync($"api/pawns/GetNextRandomSurName?pawnId={pawnId}");
+        }
+
+        public async Task GetNextRandomName(Guid pawnId)
+        {
+            var res = await _httpClient.GetStringAsync($"api/pawns/GetNextRandomName?pawnId={pawnId}");
+        }
+
+        public async Task RemovePawn(Guid pawnId)
+        {
+            var res = await _httpClient.GetStringAsync($"api/pawns/RemovePawn?pawnId={pawnId}");
+        }
     }
 }
