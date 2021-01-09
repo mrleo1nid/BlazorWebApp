@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BlazorWebApp.Shared.Models;
+using Newtonsoft.Json;
 
 namespace BlazorWebApp.Shared.Auth
 {

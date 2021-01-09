@@ -30,8 +30,7 @@ namespace BlazorWebApp.Server.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            builder.Entity<PawnTraits>()
-                .HasKey(x => new { x.PawnId, x.TraitId });
+           
             
         }
 

@@ -10,6 +10,7 @@ using BlazorWebApp.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace BlazorWebApp.Server.Controllers
 {
@@ -21,11 +22,14 @@ namespace BlazorWebApp.Server.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly PawnGeneratorService _pawnGenerator;
-        public PawnsController(ApplicationDbContext context, PawnGeneratorService pawnGenerator, UserManager<ApplicationUser> userManager)
+        private  ApplicationUser _user;
+        private readonly IServiceProvider _serviceProvider;
+        public PawnsController(ApplicationDbContext context, PawnGeneratorService pawnGenerator, UserManager<ApplicationUser> userManager, IServiceProvider serviceProvider)
         {
             _context = context;
             _pawnGenerator = pawnGenerator;
             _userManager = userManager;
+            _serviceProvider = serviceProvider;
         }
 
         [Authorize]

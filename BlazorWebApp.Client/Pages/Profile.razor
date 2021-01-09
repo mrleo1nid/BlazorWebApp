@@ -42,7 +42,8 @@
             <TableHeaderCell>Дата рождения</TableHeaderCell>
             <TableHeaderCell>Пол</TableHeaderCell>
             <TableHeaderCell>Происхождение</TableHeaderCell>
-            <TableHeaderCell>Сексуальная ориентация</TableHeaderCell>
+            <TableHeaderCell>Ориентация</TableHeaderCell>
+            <TableHeaderCell>Группа крови</TableHeaderCell>
             @if (authStateProvider.GetAuthenticationStateAsync().Result.User.IsInRole("admin"))
             {
                 <TableHeaderCell>Управление</TableHeaderCell>
@@ -60,6 +61,7 @@
             <TableRowCell Clicked="@(()=>GetRow( pawn.Id ))">@pawn.Sex.Description()</TableRowCell>
             <TableRowCell Clicked="@(()=>GetRow( pawn.Id ))">@pawn.Resides.Description()</TableRowCell>
             <TableRowCell Clicked="@(()=>GetRow( pawn.Id ))">@pawn.Orientation.Description()</TableRowCell>
+            <TableRowCell Clicked="@(()=>GetRow( pawn.Id ))">@pawn.BloodType.Description()</TableRowCell>
             @if (authStateProvider.GetAuthenticationStateAsync().Result.User.IsInRole("admin"))
             {
                 <TableRowCell>
@@ -77,7 +79,10 @@
 <Button Color="Color.Info" Loading="@createrandbuttonLoading" Clicked="@CreateRandom">Создать случайного</Button>
 <Button Color="Color.Info" Loading="@createrandbuttonLoading" Clicked="@(()=>CreateRandom( 5 ))">Создать 5</Button>
 <Button Color="Color.Info" Loading="@createrandbuttonLoading" Clicked="@(()=>CreateRandom( 10 ))">Создать 10</Button>
+<Button Color="Color.Danger" Loading="@createrandbuttonLoading" Clicked="@(()=>CreateRandom( 100 ))">Создать 100</Button>
+<Button Color="Color.Danger" Loading="@createrandbuttonLoading" Clicked="@(()=>CreateRandom( 1000 ))">Создать 1000</Button>
 <Button Color="Color.Info" Loading="@updbuttonLoading" Clicked="@UpdatePawnsClick">Обновить</Button>
+<Button Color="Color.Danger" Loading="@clearbuttonLoading" Clicked="@ClearPawnsClick">Очистить</Button>
 
 
 @code {
@@ -86,6 +91,7 @@
     private List<Pawn> pawns;
     private Pawn CurrentPawn;
     private bool updbuttonLoading = false;
+    private bool clearbuttonLoading = false;
     private bool createrandbuttonLoading = false;
     private Modal modalRef;
 
@@ -99,24 +105,46 @@
 
     private async Task CreateRandom()
     {
-        createrandbuttonLoading = true;
-        await IPawnApi.CreateRandom();
-        await UpdatePawns(false);
-        createrandbuttonLoading = false;
+        if (!createrandbuttonLoading)
+        {
+            createrandbuttonLoading = true;
+            await IPawnApi.CreateRandom();
+            await UpdatePawns(false);
+            createrandbuttonLoading = false;
+        }
     }
     private async Task CreateRandom(int count)
     {
-        createrandbuttonLoading = true;
-        for (int i = 0; i < count; i++)
+        if (!createrandbuttonLoading)
         {
-            await IPawnApi.CreateRandom();
-            await UpdatePawns(false);
+            createrandbuttonLoading = true;
+            for (int i = 0; i < count; i++)
+            {
+                await IPawnApi.CreateRandom();
+
+            }
+            createrandbuttonLoading = false;
+            await UpdatePawns(true);
         }
-        createrandbuttonLoading = false;
     }
+
+
     private async Task UpdatePawnsClick()
     {
         await UpdatePawns(true);
+    }
+    private async Task ClearPawnsClick()
+    {
+        if (!clearbuttonLoading)
+        {
+            clearbuttonLoading = true;
+            foreach (var pawn in pawns)
+            {
+                await RemovePawn(pawn.Id);
+            }
+            await UpdatePawns(false);
+            clearbuttonLoading = false;
+        }
     }
     private async Task UpdatePawns(bool setupdtstate = true)
     {

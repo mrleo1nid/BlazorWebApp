@@ -30,8 +30,6 @@ namespace BlazorWebApp.Server
             services.AddDbContext<NamesDbContext>(options =>
                 options.UseSqlite("Filename=NamesData.db"));
 
-            services.AddLogging();
-
             services.AddIdentity<ApplicationUser, IdentityRole<Guid>>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();

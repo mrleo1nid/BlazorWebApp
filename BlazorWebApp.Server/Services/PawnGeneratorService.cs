@@ -16,12 +16,12 @@ namespace BlazorWebApp.Server.Services
         private NamesDbContext _context;
         private RandomDateTime randomDateTime;
         private ApplicationDbContext _applicationDbContext;
-        public PawnGeneratorService(NamesDbContext context, ApplicationDbContext applicationDbContext)
+        public PawnGeneratorService(NamesDbContext context, ApplicationDbContext appcontext)
         {
             random = new Random(Convert.ToInt32(DateTime.Now.Millisecond));
             randomDateTime = new RandomDateTime();
             _context = context;
-            _applicationDbContext = applicationDbContext;
+            _applicationDbContext = appcontext;
         }
 
         public async Task<Pawn> GenerateRandomPawn()
@@ -36,6 +36,7 @@ namespace BlazorWebApp.Server.Services
             pawn.Age = GenerateAge();
             pawn.DateofBirth = GenerateBirth(pawn.Age);
             pawn.Traits = await GenerateTraits();
+            pawn.BloodType = GenerateBloodType();
             return pawn;
         }
 
@@ -191,9 +192,9 @@ namespace BlazorWebApp.Server.Services
                 ints[2] = (int)SexualOrientation.Bisexuality;
                 ints[3] = (int)SexualOrientation.Asexuality;
                 doubles[0] = 95.7;
-                doubles[1] = 1.2;
-                doubles[2] = 2.4;
-                doubles[3] = 0.2;
+                doubles[1] = 5;
+                doubles[2] = 6;
+                doubles[3] = 1;
             }
             else
             {
@@ -202,9 +203,9 @@ namespace BlazorWebApp.Server.Services
                 ints[2] = (int)SexualOrientation.Bisexuality;
                 ints[3] = (int)SexualOrientation.Asexuality;
                 doubles[0] = 95.4;
-                doubles[1] = 1.6;
-                doubles[2] = 0.9;
-                doubles[3] = 0.2;
+                doubles[1] = 6;
+                doubles[2] = 4;
+                doubles[3] = 1;
             }
            
             var res = RandomHelper.GetRandomNumberFromArrayWithProbabilities(ints, doubles, random);
@@ -240,6 +241,28 @@ namespace BlazorWebApp.Server.Services
             
             return new DateTime(currentear,start.Month,start.Day, start.Hour,start.Minute,start.Second);
         }
+        private BloodType GenerateBloodType()
+        {
+           int[] ints = new int[8];
+           double[] doubles = new double[8];
+           ints[0] = (int) BloodType.OPositive;
+           doubles[0] = 36.44;
+           ints[1] = (int)BloodType.APositive;
+           doubles[1] = 28.27;
+           ints[2] = (int)BloodType.BPositive;
+           doubles[2] = 20.59;
+           ints[3] = (int)BloodType.ABPositive;
+           doubles[3] = 5.09;
+           ints[4] = (int)BloodType.ONegative;
+           doubles[4] = 4.33;
+           ints[5] = (int)BloodType.ANegative;
+           doubles[5] = 3.52;
+           ints[6] = (int)BloodType.BNegative;
+           doubles[6] = 1.39;
+           ints[7] = (int)BloodType.ABNegative;
+           doubles[7] = 0.40;
+           return (BloodType) RandomHelper.GetRandomNumberFromArrayWithProbabilities(ints, doubles, random);
+        }
         private async Task<List<CharacterTrait>> GenerateTraits()
         {
             List<CharacterTrait> traits = new List<CharacterTrait>();
@@ -263,7 +286,7 @@ namespace BlazorWebApp.Server.Services
             for (int i = 0; i <= res; i++)
             {
                 var restrid = RandomHelper.GetRandomNumberFromArrayWithProbabilities(ints, doubles, random);
-                traits.Add(dbTraits[restrid]);
+                traits.Add( await _applicationDbContext.Traits.FindAsync(restrid));
             }
             return traits;
         }

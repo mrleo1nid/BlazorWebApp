@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Net.Mime;
 using System.Text;
 using System.Text.Json;
@@ -39,6 +40,11 @@ namespace BlazorWebApp.Client.Services.Implementations
         public async Task CreateRandom()
         {
             var result = await _httpClient.PostAsync($"api/pawns/CreateRandom", null);
+            result.EnsureSuccessStatusCode();
+        }
+        public async Task CreateRandom(IntIdParams idparams)
+        {
+            var result = await _httpClient.PostAsJsonAsync($"api/pawns/CreateRandomParallele", idparams);
             result.EnsureSuccessStatusCode();
         }
         public async Task Edit(Pawn pawn)

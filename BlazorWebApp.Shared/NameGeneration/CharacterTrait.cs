@@ -12,7 +12,7 @@ namespace BlazorWebApp.Shared.NameGeneration
         public List<Pawn> Pawns { get; set; }
         public CharacterTrait()
         {
-            Pawns = new List<Pawn>();
+           Pawns = new List<Pawn>();
         }
     }
 }

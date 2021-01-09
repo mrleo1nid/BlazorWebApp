@@ -19,6 +19,7 @@ namespace BlazorWebApp.Shared.Models
         public int Age { get; set; }
         public Resides Resides { get; set; }
         public SexualOrientation Orientation { get; set; }
+        public BloodType BloodType { get; set; }
         public DateTime DateofBirth { get; set; }
         public Guid UserId { get; set; }
         public ApplicationUser User { get; set; }
@@ -55,15 +56,35 @@ namespace BlazorWebApp.Shared.Models
         [Description("Деревня")]
         Village =2,
     }
+
+    public enum BloodType
+    {
+        [Description("O+")]
+        OPositive = 0,
+        [Description("A+")]
+        APositive = 1,
+        [Description("B+")]
+        BPositive = 2,
+        [Description("AB+")]
+        ABPositive = 3,
+        [Description("O-")]
+        ONegative = 4,
+        [Description("A-")]
+        ANegative = 5,
+        [Description("B-")]
+        BNegative = 6,
+        [Description("AB-")]
+        ABNegative = 7
+    }
     public enum SexualOrientation
     {
-        [Description("Гетеросексуальность")]
+        [Description("Гетеро")]
         Heterosexuality = 1,
-        [Description("Бисексуальность")]
+        [Description("Би")]
         Bisexuality = 2,
-        [Description("Гомосексуальность")]
+        [Description("Гомо")]
         Homosexuality = 3,
-        [Description("Асексуальность")]
+        [Description("Асексуал")]
         Asexuality = 4
     }
 }
