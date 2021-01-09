@@ -32,7 +32,7 @@ namespace BlazorWebApp.Server.Controllers
         [HttpGet]
         public async Task<List<Pawn>> GetPawns()
         {
-            return _context.Pawns.ToList();
+            return await _context.Pawns.ToListAsync();
         }
         [Authorize]
         [HttpGet]
@@ -62,6 +62,7 @@ namespace BlazorWebApp.Server.Controllers
         public async Task Edit(Pawn pawn)
         {
             _context.Pawns.Update(pawn);
+            await _context.SaveChangesAsync();
         }
 
         [Authorize]

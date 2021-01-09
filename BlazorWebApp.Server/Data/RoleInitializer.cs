@@ -13,7 +13,7 @@ namespace BlazorWebApp.Server.Data
 {
     public class RoleInitializer
     {
-        public static async Task InitializeAsync(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole<Guid>> roleManager)
+        public static async Task InitializeAsync(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole<Guid>> roleManager, ApplicationDbContext appcontext)
         {
             string adminEmail = "admin@gmail.com";
             string password = "adminadmin";
@@ -34,7 +34,32 @@ namespace BlazorWebApp.Server.Data
                     await userManager.AddToRoleAsync(admin, "admin");
                 }
             }
+            await InitTraits(appcontext);
+        }
 
+        private static async Task InitTraits(ApplicationDbContext appcontext)
+        {
+            if (!appcontext.Traits.Any())
+            {
+                if (new FileInfo("NamesData/character_traits.txt").Exists)
+                {
+                    string[] readText = File.ReadAllLines("NamesData/character_traits.txt");
+                    if (readText.Any())
+                    {
+                        string[] reslines = readText.Where(x => x.Length > 3).ToArray();
+                        foreach (var line in reslines)
+                        {
+                            CharacterTrait trait = new CharacterTrait()
+                            {
+                                Name = line
+                            };
+                            await appcontext.Traits.AddAsync(trait);
+                        }
+
+                        await appcontext.SaveChangesAsync();
+                    }
+                }
+            }
         }
 
         public static async Task InitNamesContext(NamesDbContext context)

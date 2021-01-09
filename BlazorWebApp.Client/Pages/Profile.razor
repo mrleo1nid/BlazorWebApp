@@ -2,6 +2,8 @@
 @using BlazorWebApp.Shared.Auth
 @using BlazorWebApp.Shared.Models
 @using System.Threading
+@using BlazorWebApp.Client.Helpers
+@using BlazorWebApp.Shared.Helpers
 @inject IdentityAuthenticationStateProvider authStateProvider
 @inject IPawnApi IPawnApi
 @attribute [Authorize]
@@ -40,6 +42,7 @@
             <TableHeaderCell>Дата рождения</TableHeaderCell>
             <TableHeaderCell>Пол</TableHeaderCell>
             <TableHeaderCell>Происхождение</TableHeaderCell>
+            <TableHeaderCell>Сексуальная ориентация</TableHeaderCell>
             @if (authStateProvider.GetAuthenticationStateAsync().Result.User.IsInRole("admin"))
             {
                 <TableHeaderCell>Управление</TableHeaderCell>
@@ -51,11 +54,12 @@
         @foreach (var pawn in pawns)
         {
         <TableRow>
-            <TableRowHeader>@pawn.FullName</TableRowHeader>
-            <TableRowCell>@pawn.Age</TableRowCell>
-            <TableRowCell>@pawn.DateofBirth.ToString("D")</TableRowCell>
-            <TableRowCell>@pawn.Sex</TableRowCell>
-            <TableRowCell>@pawn.Resides</TableRowCell>
+            <TableRowHeader Clicked="@(()=>GetRow( pawn.Id ))">@pawn.FullName</TableRowHeader>
+            <TableRowCell Clicked="@(()=>GetRow( pawn.Id ))">@pawn.Age</TableRowCell>
+            <TableRowCell Clicked="@(()=>GetRow( pawn.Id ))">@pawn.DateofBirth.ToString("D")</TableRowCell>
+            <TableRowCell Clicked="@(()=>GetRow( pawn.Id ))">@pawn.Sex.Description()</TableRowCell>
+            <TableRowCell Clicked="@(()=>GetRow( pawn.Id ))">@pawn.Resides.Description()</TableRowCell>
+            <TableRowCell Clicked="@(()=>GetRow( pawn.Id ))">@pawn.Orientation.Description()</TableRowCell>
             @if (authStateProvider.GetAuthenticationStateAsync().Result.User.IsInRole("admin"))
             {
                 <TableRowCell>
@@ -71,19 +75,26 @@
     </TableBody>
 </Table>
 <Button Color="Color.Info" Loading="@createrandbuttonLoading" Clicked="@CreateRandom">Создать случайного</Button>
+<Button Color="Color.Info" Loading="@createrandbuttonLoading" Clicked="@(()=>CreateRandom( 5 ))">Создать 5</Button>
+<Button Color="Color.Info" Loading="@createrandbuttonLoading" Clicked="@(()=>CreateRandom( 10 ))">Создать 10</Button>
 <Button Color="Color.Info" Loading="@updbuttonLoading" Clicked="@UpdatePawnsClick">Обновить</Button>
+
+
 @code {
 
     private UserInfo info;
     private List<Pawn> pawns;
+    private Pawn CurrentPawn;
     private bool updbuttonLoading = false;
     private bool createrandbuttonLoading = false;
+    private Modal modalRef;
 
     protected override async Task OnInitializedAsync()
     {
         pawns = new List<Pawn>();
         info = await authStateProvider.GetUserInfo();
         await UpdatePawns(true);
+        CurrentPawn = pawns.FirstOrDefault();
     }
 
     private async Task CreateRandom()
@@ -91,6 +102,16 @@
         createrandbuttonLoading = true;
         await IPawnApi.CreateRandom();
         await UpdatePawns(false);
+        createrandbuttonLoading = false;
+    }
+    private async Task CreateRandom(int count)
+    {
+        createrandbuttonLoading = true;
+        for (int i = 0; i < count; i++)
+        {
+            await IPawnApi.CreateRandom();
+            await UpdatePawns(false);
+        }
         createrandbuttonLoading = false;
     }
     private async Task UpdatePawnsClick()
@@ -105,7 +126,8 @@
     }
     private async Task GetRow(Guid pawnid)
     {
-        var pawn = await IPawnApi.GetPawnById(pawnid);
+        CurrentPawn = await IPawnApi.GetPawnById(pawnid);
+        ShowModal();
     }
     private async Task ChangeName(Guid pawnid)
     {
@@ -121,7 +143,14 @@
     {
         await IPawnApi.RemovePawn(pawnid);
         await UpdatePawns(true);
-      
-    }
 
+    }
+    private void ShowModal()
+    {
+        modalRef.Show();
+    }
+    private void HideModal()
+    {
+        modalRef.Hide();
+    }
 }

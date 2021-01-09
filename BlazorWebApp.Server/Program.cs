@@ -24,7 +24,8 @@ namespace BlazorWebApp.Server
                 {
                     var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
                     var rolesManager = services.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
-                    await RoleInitializer.InitializeAsync(userManager, rolesManager);
+                    var dbcontext = services.GetRequiredService<ApplicationDbContext>();
+                    await RoleInitializer.InitializeAsync(userManager, rolesManager, dbcontext);
                 }
                 catch (Exception ex)
                 { 

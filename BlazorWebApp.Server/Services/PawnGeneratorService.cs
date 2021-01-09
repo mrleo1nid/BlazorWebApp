@@ -15,11 +15,13 @@ namespace BlazorWebApp.Server.Services
         private Random random;
         private NamesDbContext _context;
         private RandomDateTime randomDateTime;
-        public PawnGeneratorService(NamesDbContext context)
+        private ApplicationDbContext _applicationDbContext;
+        public PawnGeneratorService(NamesDbContext context, ApplicationDbContext applicationDbContext)
         {
             random = new Random(Convert.ToInt32(DateTime.Now.Millisecond));
             randomDateTime = new RandomDateTime();
             _context = context;
+            _applicationDbContext = applicationDbContext;
         }
 
         public async Task<Pawn> GenerateRandomPawn()
@@ -30,8 +32,10 @@ namespace BlazorWebApp.Server.Services
             pawn = await CreatePawnSurName(pawn);
             pawn = await CreatePawnPatronim(pawn);
             pawn.Resides = GenerateResides();
+            pawn.Orientation = GenerateSexualOrientation(pawn.Sex);
             pawn.Age = GenerateAge();
             pawn.DateofBirth = GenerateBirth(pawn.Age);
+            pawn.Traits = await GenerateTraits();
             return pawn;
         }
 
@@ -176,6 +180,36 @@ namespace BlazorWebApp.Server.Services
                 return Sex.Female;
             }
         }
+        private SexualOrientation GenerateSexualOrientation(Sex sex)
+        {
+            int[] ints = new int[4];
+            double[] doubles = new double[4];
+            if (sex == Sex.Female)
+            {
+                ints[0] = (int)SexualOrientation.Heterosexuality;
+                ints[1] = (int)SexualOrientation.Homosexuality;
+                ints[2] = (int)SexualOrientation.Bisexuality;
+                ints[3] = (int)SexualOrientation.Asexuality;
+                doubles[0] = 95.7;
+                doubles[1] = 1.2;
+                doubles[2] = 2.4;
+                doubles[3] = 0.2;
+            }
+            else
+            {
+                ints[0] = (int)SexualOrientation.Heterosexuality;
+                ints[1] = (int)SexualOrientation.Homosexuality;
+                ints[2] = (int)SexualOrientation.Bisexuality;
+                ints[3] = (int)SexualOrientation.Asexuality;
+                doubles[0] = 95.4;
+                doubles[1] = 1.6;
+                doubles[2] = 0.9;
+                doubles[3] = 0.2;
+            }
+           
+            var res = RandomHelper.GetRandomNumberFromArrayWithProbabilities(ints, doubles, random);
+            return (SexualOrientation) res;
+        }
         private Resides GenerateResides()
         {
             int[] ints = new int[2];
@@ -205,6 +239,33 @@ namespace BlazorWebApp.Server.Services
             }
             
             return new DateTime(currentear,start.Month,start.Day, start.Hour,start.Minute,start.Second);
+        }
+        private async Task<List<CharacterTrait>> GenerateTraits()
+        {
+            List<CharacterTrait> traits = new List<CharacterTrait>();
+            int[] ints = new int[3];
+            double[] doubles = new double[3];
+            ints[0] = 2;
+            ints[1] = 3;
+            ints[2] = 5;
+            doubles[0] = 60;
+            doubles[1] = 30;
+            doubles[2] = 10;
+            var res = RandomHelper.GetRandomNumberFromArrayWithProbabilities(ints, doubles, random);
+            var dbTraits = await _applicationDbContext.Traits.ToListAsync();
+            ints = new int[dbTraits.Count()];
+            doubles = new double[dbTraits.Count()];
+            for (int j = 0; j < dbTraits.Count; j++)
+            {
+                ints[j] = dbTraits[j].Id;
+                doubles[j] = 10;
+            }
+            for (int i = 0; i <= res; i++)
+            {
+                var restrid = RandomHelper.GetRandomNumberFromArrayWithProbabilities(ints, doubles, random);
+                traits.Add(dbTraits[restrid]);
+            }
+            return traits;
         }
     }
     

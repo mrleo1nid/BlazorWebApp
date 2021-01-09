@@ -8,13 +8,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using BlazorWebApp.Shared.Auth;
 using BlazorWebApp.Shared.Models;
+using BlazorWebApp.Shared.NameGeneration;
 
 namespace BlazorWebApp.Server.Data
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>
     {
         public DbSet<Pawn> Pawns { get; set; }
-
+        public DbSet<CharacterTrait> Traits { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
@@ -29,10 +30,9 @@ namespace BlazorWebApp.Server.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            // Customize the ASP.NET Identity model and override the defaults if needed.
-            // For example, you can rename the ASP.NET Identity table names and more.
-            // Add your customizations after calling base.OnModelCreating(builder);
-
+            builder.Entity<PawnTraits>()
+                .HasKey(x => new { x.PawnId, x.TraitId });
+            
         }
 
     }
