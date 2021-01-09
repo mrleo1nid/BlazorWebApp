@@ -192,8 +192,8 @@ namespace BlazorWebApp.Server.Services
                 ints[2] = (int)SexualOrientation.Bisexuality;
                 ints[3] = (int)SexualOrientation.Asexuality;
                 doubles[0] = 95.7;
-                doubles[1] = 5;
-                doubles[2] = 6;
+                doubles[1] = 2.5;
+                doubles[2] = 3;
                 doubles[3] = 1;
             }
             else
@@ -203,8 +203,8 @@ namespace BlazorWebApp.Server.Services
                 ints[2] = (int)SexualOrientation.Bisexuality;
                 ints[3] = (int)SexualOrientation.Asexuality;
                 doubles[0] = 95.4;
-                doubles[1] = 6;
-                doubles[2] = 4;
+                doubles[1] = 3;
+                doubles[2] = 2.1;
                 doubles[3] = 1;
             }
            
@@ -231,15 +231,23 @@ namespace BlazorWebApp.Server.Services
         }
         private DateTime GenerateBirth(int pawnears)
         {
-            var start = randomDateTime.Next();
-            var nowmon = DateTime.Now.Month;
-            var currentear = DateTime.Now.AddYears(-pawnears).Year;
-            if (start.Month>nowmon)
+            try
             {
-                currentear = currentear - 1;
+                var start = randomDateTime.Next();
+                var nowmon = DateTime.Now.Month;
+                var currentear = DateTime.Now.AddYears(-pawnears).Year;
+                if (start.Month > nowmon)
+                {
+                    currentear = currentear - 1;
+                }
+
+                return new DateTime(currentear, start.Month, start.Day, start.Hour, start.Minute, start.Second);
             }
-            
-            return new DateTime(currentear,start.Month,start.Day, start.Hour,start.Minute,start.Second);
+            catch (Exception e)
+            {
+                return GenerateBirth(pawnears);
+            }
+           
         }
         private BloodType GenerateBloodType()
         {

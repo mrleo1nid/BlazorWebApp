@@ -65,12 +65,12 @@
             @if (authStateProvider.GetAuthenticationStateAsync().Result.User.IsInRole("admin"))
             {
                 <TableRowCell>
-                    <Button Color="Color.Danger" Loading="@updbuttonLoading" Clicked="@(()=>ChangeName( pawn.Id ))">Имя</Button>
-                    <Button Color="Color.Danger" Loading="@updbuttonLoading" Clicked="@(()=>ChangeSurName( pawn.Id ))">Фамилия</Button>
+                    <Button Color="Color.Danger"  Clicked="@(()=>ChangeName( pawn.Id ))">Имя</Button>
+                    <Button Color="Color.Danger"  Clicked="@(()=>ChangeSurName( pawn.Id ))">Фамилия</Button>
                 </TableRowCell>
             }
             <TableRowCell>
-                <Button Color="Color.Danger" Loading="@updbuttonLoading" Clicked="@(()=>RemovePawn( pawn.Id ))">X</Button>
+                <Button Color="Color.Danger"  Clicked="@(()=>RemovePawn( pawn.Id ))">X</Button>
             </TableRowCell>
         </TableRow>
         }
@@ -83,7 +83,9 @@
 <Button Color="Color.Danger" Loading="@createrandbuttonLoading" Clicked="@(()=>CreateRandom( 1000 ))">Создать 1000</Button>
 <Button Color="Color.Info" Loading="@updbuttonLoading" Clicked="@UpdatePawnsClick">Обновить</Button>
 <Button Color="Color.Danger" Loading="@clearbuttonLoading" Clicked="@ClearPawnsClick">Очистить</Button>
-
+<Progress Margin="Margin.Is3.FromTop">
+    <ProgressBar Value="@progressvalue" />
+</Progress>
 
 @code {
 
@@ -94,6 +96,7 @@
     private bool clearbuttonLoading = false;
     private bool createrandbuttonLoading = false;
     private Modal modalRef;
+    private int progressvalue = 0;
 
     protected override async Task OnInitializedAsync()
     {
@@ -117,14 +120,16 @@
     {
         if (!createrandbuttonLoading)
         {
+            progressvalue = 0;
             createrandbuttonLoading = true;
             for (int i = 0; i < count; i++)
             {
                 await IPawnApi.CreateRandom();
-
+                progressvalue = 100 / count * (i+1);
+                await UpdatePawns(true);
             }
             createrandbuttonLoading = false;
-            await UpdatePawns(true);
+            progressvalue = 0;
         }
     }
 
@@ -138,11 +143,10 @@
         if (!clearbuttonLoading)
         {
             clearbuttonLoading = true;
-            foreach (var pawn in pawns)
+            for (int i = 0; i < pawns.Count; i++)
             {
-                await RemovePawn(pawn.Id);
+                await RemovePawn(pawns[i].Id);
             }
-            await UpdatePawns(false);
             clearbuttonLoading = false;
         }
     }
@@ -150,6 +154,7 @@
     {
         updbuttonLoading = setupdtstate;
         pawns = await IPawnApi.GetPawnsByUserId(info.UserId);
+        StateHasChanged();
         updbuttonLoading = false;
     }
     private async Task GetRow(Guid pawnid)
@@ -171,7 +176,6 @@
     {
         await IPawnApi.RemovePawn(pawnid);
         await UpdatePawns(true);
-
     }
     private void ShowModal()
     {

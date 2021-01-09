@@ -18,5 +18,6 @@ namespace BlazorWebApp.Shared.Helpers
         {
             return GetCustomDescription(value);
         }
+
     }
 }
