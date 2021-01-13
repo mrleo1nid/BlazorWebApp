@@ -16,6 +16,8 @@ namespace BlazorWebApp.Server.Data
     {
         public DbSet<Pawn> Pawns { get; set; }
         public DbSet<CharacterTrait> Traits { get; set; }
+        public DbSet<Relation> Relations { get; set; }
+
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
@@ -29,9 +31,23 @@ namespace BlazorWebApp.Server.Data
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            builder.Entity<Relation>()
+                .HasOne(sc => sc.Pawn)
+                .WithMany(s => s.Relations)
+                .HasForeignKey(sc => sc.PawnId);
+            builder.Entity<Pawn>()
+                .HasMany(sc => sc.Relations)
+                .WithOne(s => s.Pawn)
+                .HasForeignKey(sc => sc.PawnId);
+            builder.Entity<Relation>()
+                .HasOne(sc => sc.RelationPawn)
+                .WithMany(s => s.OthenRelations)
+                .HasForeignKey(sc => sc.RelationPawnId);
+            builder.Entity<Pawn>()
+                .HasMany(sc => sc.OthenRelations)
+                .WithOne(s => s.RelationPawn)
+                .HasForeignKey(sc => sc.RelationPawnId);
             base.OnModelCreating(builder);
-           
-            
         }
 
     }

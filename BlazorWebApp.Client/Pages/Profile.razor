@@ -5,6 +5,7 @@
 @using BlazorWebApp.Client.Helpers
 @using BlazorWebApp.Shared.Helpers
 @inject IdentityAuthenticationStateProvider authStateProvider
+@inject NavigationManager NavigationManager
 @inject IPawnApi IPawnApi
 @attribute [Authorize]
 
@@ -54,33 +55,31 @@
     <TableBody>
         @foreach (var pawn in pawns)
         {
-        <TableRow>
-            <TableRowHeader Clicked="@(()=>GetRow( pawn.Id ))">@pawn.FullName</TableRowHeader>
-            <TableRowCell Clicked="@(()=>GetRow( pawn.Id ))">@pawn.Age</TableRowCell>
-            <TableRowCell Clicked="@(()=>GetRow( pawn.Id ))">@pawn.DateofBirth.ToString("D")</TableRowCell>
-            <TableRowCell Clicked="@(()=>GetRow( pawn.Id ))">@pawn.Sex.Description()</TableRowCell>
-            <TableRowCell Clicked="@(()=>GetRow( pawn.Id ))">@pawn.Resides.Description()</TableRowCell>
-            <TableRowCell Clicked="@(()=>GetRow( pawn.Id ))">@pawn.Orientation.Description()</TableRowCell>
-            <TableRowCell Clicked="@(()=>GetRow( pawn.Id ))">@pawn.BloodType.Description()</TableRowCell>
-            @if (authStateProvider.GetAuthenticationStateAsync().Result.User.IsInRole("admin"))
-            {
+            <TableRow>
+                <TableRowHeader Clicked="@(()=>GetRow( pawn.Id ))">@pawn.FullName</TableRowHeader>
+                <TableRowCell Clicked="@(()=>GetRow( pawn.Id ))">@pawn.Age</TableRowCell>
+                <TableRowCell Clicked="@(()=>GetRow( pawn.Id ))">@pawn.DateofBirth.ToString("D")</TableRowCell>
+                <TableRowCell Clicked="@(()=>GetRow( pawn.Id ))">@pawn.Sex.Description()</TableRowCell>
+                <TableRowCell Clicked="@(()=>GetRow( pawn.Id ))">@pawn.Resides.Description()</TableRowCell>
+                <TableRowCell Clicked="@(()=>GetRow( pawn.Id ))">@pawn.Orientation.Description()</TableRowCell>
+                <TableRowCell Clicked="@(()=>GetRow( pawn.Id ))">@pawn.BloodType.Description()</TableRowCell>
+                @if (authStateProvider.GetAuthenticationStateAsync().Result.User.IsInRole("admin"))
+                {
+                    <TableRowCell>
+                        <Button Color="Color.Danger" Clicked="@(()=>ChangeName( pawn.Id ))">Имя</Button>
+                        <Button Color="Color.Danger" Clicked="@(()=>ChangeSurName( pawn.Id ))">Фамилия</Button>
+                    </TableRowCell>
+                }
                 <TableRowCell>
-                    <Button Color="Color.Danger"  Clicked="@(()=>ChangeName( pawn.Id ))">Имя</Button>
-                    <Button Color="Color.Danger"  Clicked="@(()=>ChangeSurName( pawn.Id ))">Фамилия</Button>
+                    <Button Color="Color.Danger" Clicked="@(()=>RemovePawn( pawn.Id ))">X</Button>
                 </TableRowCell>
-            }
-            <TableRowCell>
-                <Button Color="Color.Danger"  Clicked="@(()=>RemovePawn( pawn.Id ))">X</Button>
-            </TableRowCell>
-        </TableRow>
+            </TableRow>
         }
     </TableBody>
 </Table>
 <Button Color="Color.Info" Loading="@createrandbuttonLoading" Clicked="@CreateRandom">Создать случайного</Button>
 <Button Color="Color.Info" Loading="@createrandbuttonLoading" Clicked="@(()=>CreateRandom( 5 ))">Создать 5</Button>
 <Button Color="Color.Info" Loading="@createrandbuttonLoading" Clicked="@(()=>CreateRandom( 10 ))">Создать 10</Button>
-<Button Color="Color.Danger" Loading="@createrandbuttonLoading" Clicked="@(()=>CreateRandom( 100 ))">Создать 100</Button>
-<Button Color="Color.Danger" Loading="@createrandbuttonLoading" Clicked="@(()=>CreateRandom( 1000 ))">Создать 1000</Button>
 <Button Color="Color.Info" Loading="@updbuttonLoading" Clicked="@UpdatePawnsClick">Обновить</Button>
 <Button Color="Color.Danger" Loading="@clearbuttonLoading" Clicked="@ClearPawnsClick">Очистить</Button>
 <Progress Margin="Margin.Is3.FromTop">
@@ -125,7 +124,7 @@
             for (int i = 0; i < count; i++)
             {
                 await IPawnApi.CreateRandom();
-                progressvalue = 100 / count * (i+1);
+                progressvalue = 100 / count * (i + 1);
                 await UpdatePawns(true);
             }
             createrandbuttonLoading = false;
@@ -160,7 +159,7 @@
     private async Task GetRow(Guid pawnid)
     {
         CurrentPawn = await IPawnApi.GetPawnById(pawnid);
-        ShowModal();
+        NavigationManager.NavigateTo($"showpawn?PawnId={pawnid}");
     }
     private async Task ChangeName(Guid pawnid)
     {

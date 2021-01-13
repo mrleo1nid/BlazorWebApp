@@ -40,6 +40,49 @@ namespace BlazorWebApp.Server.Services
             return pawn;
         }
 
+        public async Task<Tuple<Pawn,Pawn>> GenerateParents(Pawn child)
+        {
+            Pawn mother = new Pawn();
+            mother.Sex = Sex.Female;
+            mother = await CreatePawnName(mother);
+            mother = await CreatePawnSurName(mother);
+            mother = await CreatePawnPatronim(mother);
+            mother.Resides = GenerateResides();
+            mother.Orientation = GenerateSexualOrientation(mother.Sex);
+            mother.Age = RandomHelper.GetDiminishingChanceParentAge(child.Age + 25, 10, random);
+            mother.DateofBirth = GenerateBirth(mother.Age);
+            mother.Traits = await GenerateTraits();
+            mother.BloodType = GenerateBloodType();
+            mother.FirstSurname = mother.Surname;
+            mother.Surname = child.Surname;
+            var deathage = RandomHelper.GetDeathChance(mother.Age - child.Age, mother.Age, random);
+            if (deathage.Item1)
+            {
+                mother.IsLive = false;
+                mother.DateOfDeath = GenerateBirth(mother.Age- deathage.Item2);
+            }
+
+
+            Pawn father = new Pawn();
+            father.Sex = Sex.Male;
+            father.Name = GetFatherName(child.Patronymic);
+            father = await CreatePawnPatronim(father);
+            father.Resides = GenerateResides();
+            father.Orientation = GenerateSexualOrientation(father.Sex);
+            father.Age = RandomHelper.GetDiminishingChanceParentAge(child.Age + 25, 10, random);
+            father.DateofBirth = GenerateBirth(father.Age);
+            father.Traits = await GenerateTraits();
+            father.BloodType = GenerateBloodType();
+            father.Surname = child.Surname;
+            deathage = RandomHelper.GetDeathChance(father.Age - child.Age, father.Age, random);
+            if (deathage.Item1)
+            {
+                father.IsLive = false;
+                father.DateOfDeath = GenerateBirth(deathage.Item2);
+            }
+            return new Tuple<Pawn, Pawn>(father, mother);
+        }
+
         public async Task LowOldName(string name)
         {
           var namestr = await  _context.NameStrings.Where(x => x.Name == name).FirstOrDefaultAsync();
@@ -53,6 +96,17 @@ namespace BlazorWebApp.Server.Services
             surnamestr.PeoplesCount = random.Next(50, 300);
             _context.SurnameStrings.Update(surnamestr);
             await _context.SaveChangesAsync();
+        }
+        private  string GetFatherName(string patronim)
+        {
+            var patr = _context.PatronimicStrings.Where(x => x.Patronimic == patronim)
+                                                              .Include(x=>x.NameString)
+                                                              .FirstOrDefault();
+            if (patr!=null)
+            {
+                return patr.NameString.Name;
+            }
+            return string.Empty;
         }
         public async Task<Pawn> CreatePawnName(Pawn pawn)
         {
@@ -133,32 +187,32 @@ namespace BlazorWebApp.Server.Services
             for (int i = 1; i < 14; i++)
             {
                 ints[i - 1] = i;
-                doubles[i - 1] = 20;
+                doubles[i - 1] = 20 + i;
             }
             for (int i = 14; i < 30; i++)
             {
                 ints[i - 1] = i;
-                doubles[i - 1] = 30;
+                doubles[i - 1] = 40 + i;
             }
             for (int i = 30; i < 45; i++)
             {
                 ints[i - 1] = i;
-                doubles[i - 1] = 35;
+                doubles[i - 1] = 35 + i;
             }
             for (int i = 45; i < 60; i++)
             {
                 ints[i - 1] = i;
-                doubles[i - 1] = 30;
+                doubles[i - 1] = 30 + i;
             }
             for (int i = 60; i < 70; i++)
             {
                 ints[i - 1] = i;
-                doubles[i - 1] = 10;
+                doubles[i - 1] = 10 + i;
             }
             for (int i = 70; i < 110; i++)
             {
                 ints[i - 1] = i;
-                doubles[i - 1] = 6;
+                doubles[i - 1] = 6 + i;
             }
             return RandomHelper.GetRandomNumberFromArrayWithProbabilities(ints, doubles, random);
         }
@@ -243,7 +297,7 @@ namespace BlazorWebApp.Server.Services
 
                 return new DateTime(currentear, start.Month, start.Day, start.Hour, start.Minute, start.Second);
             }
-            catch (Exception e)
+            catch 
             {
                 return GenerateBirth(pawnears);
             }

@@ -49,5 +49,44 @@ namespace BlazorWebApp.Shared.Helpers
                     return vals[i];
             return vals.Last();
         }
+
+        public static int GetDiminishingChanceParentAge (int start, int size, Random random)
+        {
+           int[] ints = new int[size * 2 -1];
+           double[] doubles = new double[size*2 -1];
+           for (int i = 0; i < size; i++)
+           {
+               ints[i] = start + i;
+               doubles[i] = size - i;
+           }
+           for (int i = 1; i < size; i++)
+           {
+               ints[9+i] = start - i;
+               doubles[9 + i] = size - i;
+           }
+
+           return GetRandomNumberFromArrayWithProbabilities(ints, doubles, random);
+        }
+        public static Tuple<bool, int> GetDeathChance(int start, int age, Random random)
+        {
+            int[] ints = new int[age-start];
+            double[] doubles = new double[age - start];
+            int counter = 0;
+            for (int i = 0; i < ints.Length; i++)
+            {
+                ints[i] = start+i;
+                doubles[i] = counter;
+                counter++;
+            }
+            var deathage = GetRandomNumberFromArrayWithProbabilities(ints, doubles, random);
+            if (deathage<=age)
+            {
+                return new Tuple<bool, int>(true, deathage);
+            }
+            else
+            {
+                return new Tuple<bool, int>(false, deathage);
+            }
+        }
     }
 }

@@ -29,7 +29,6 @@ namespace BlazorWebApp.Server
               options.UseSqlite("Filename=MainData.db"));
             services.AddDbContext<NamesDbContext>(options =>
                 options.UseSqlite("Filename=NamesData.db"));
-
             services.AddIdentity<ApplicationUser, IdentityRole<Guid>>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();

@@ -11,9 +11,10 @@ namespace BlazorWebApp.Shared.Models
     public class Pawn
     { 
         public Guid Id { get; set; }
-
+        public bool IsLive { get; set; }
         public string Name { get; set; }
         public string Surname { get; set; }
+        public string FirstSurname { get; set; }
         public string Patronymic { get; set; }
         public Sex Sex { get; set; }
         public int Age { get; set; }
@@ -21,6 +22,7 @@ namespace BlazorWebApp.Shared.Models
         public SexualOrientation Orientation { get; set; }
         public BloodType BloodType { get; set; }
         public DateTime DateofBirth { get; set; }
+        public DateTime DateOfDeath { get; set; }
         public Guid UserId { get; set; }
         public ApplicationUser User { get; set; }
         [IgnoreDataMember]
@@ -33,10 +35,15 @@ namespace BlazorWebApp.Shared.Models
             else return "М";
         } }
 
+        public List<Relation> Relations { get; set; }
+        public List<Relation> OthenRelations { get; set; }
         public List<CharacterTrait> Traits { get; set; }
         public Pawn()
         {
             Traits = new List<CharacterTrait>();
+            IsLive = true;
+            Relations = new List<Relation>();
+            OthenRelations = new List<Relation>();
         }
 
     }

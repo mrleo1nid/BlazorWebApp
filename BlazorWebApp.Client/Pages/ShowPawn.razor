@@ -1,0 +1,20 @@
+﻿@page "/showpawn"
+@using BlazorWebApp.Shared.Models
+@using BlazorWebApp.Shared.Helpers
+@inject IPawnApi IPawnApi
+@attribute [Authorize]
+
+<h3>Pawn</h3>
+
+
+@code {
+    private Pawn pawn;
+
+    [Parameter]
+    public Guid PawnId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        pawn = await IPawnApi.GetPawnById(PawnId);
+    }
+}

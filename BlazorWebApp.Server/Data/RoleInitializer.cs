@@ -17,6 +17,8 @@ namespace BlazorWebApp.Server.Data
         {
             string adminEmail = "admin@gmail.com";
             string password = "adminadmin";
+            string worldemail = "world@world.world";
+            string worldpass = "worldsagjdsfonawoeinoagnub121312";
             if (await roleManager.FindByNameAsync("admin") == null)
             {
                 await roleManager.CreateAsync(new IdentityRole<Guid>("admin"));
@@ -25,13 +27,26 @@ namespace BlazorWebApp.Server.Data
             {
                 await roleManager.CreateAsync(new IdentityRole<Guid>("user"));
             }
-            if (await userManager.FindByNameAsync(adminEmail) == null)
+            if (await roleManager.FindByNameAsync("world") == null)
+            {
+                await roleManager.CreateAsync(new IdentityRole<Guid>("world"));
+            }
+            if (await userManager.FindByEmailAsync(adminEmail) == null)
             {
                 ApplicationUser admin = new ApplicationUser { Email = adminEmail, UserName = "admin", RegisterDateTime = DateTime.Now};
                 IdentityResult result = await userManager.CreateAsync(admin, password);
                 if (result.Succeeded)
                 {
                     await userManager.AddToRoleAsync(admin, "admin");
+                }
+            }
+            if (await userManager.FindByEmailAsync(worldemail) == null)
+            {
+                ApplicationUser admin = new ApplicationUser { Email = worldemail, UserName = "world", RegisterDateTime = DateTime.Now};
+                IdentityResult result = await userManager.CreateAsync(admin, worldpass);
+                if (result.Succeeded)
+                {
+                    await userManager.AddToRoleAsync(admin, "world");
                 }
             }
             await InitTraits(appcontext);
