@@ -117,6 +117,12 @@ namespace BlazorWebApp.Server.Controllers
             _context.Pawns.Update(pawn);
             await _context.SaveChangesAsync();
         }
-
+        [Authorize]
+        [HttpPost]
+        public async Task RemovePawns(List<Pawn> pawns)
+        {
+            _context.Pawns.RemoveRange(pawns);
+            await _context.SaveChangesAsync();
+        }
     }
 }

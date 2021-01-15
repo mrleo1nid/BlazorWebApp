@@ -66,5 +66,11 @@ namespace BlazorWebApp.Client.Services.Implementations
         {
             var res = await _httpClient.GetStringAsync($"api/pawns/RemovePawn?pawnId={pawnId}");
         }
+        public async Task RemovePawns(List<Pawn> pawns)
+        {
+            var result = await _httpClient.PostAsJsonAsync("api/pawns/RemovePawns", pawns);
+            if (result.StatusCode == System.Net.HttpStatusCode.BadRequest) throw new Exception(await result.Content.ReadAsStringAsync());
+            result.EnsureSuccessStatusCode();
+        }
     }
 }

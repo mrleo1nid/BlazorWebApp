@@ -73,7 +73,14 @@ namespace BlazorWebApp.Server.Services
             father.DateofBirth = GenerateBirth(father.Age);
             father.Traits = await GenerateTraits();
             father.BloodType = GenerateBloodType();
-            father.Surname = child.Surname;
+            if (child.Sex == Sex.Female && child.Surname.EndsWith('а'))
+            {
+                father.Surname = child.Surname.TrimEnd('а');
+            }
+            else
+            {
+                father.Surname = child.Surname;
+            }
             deathage = RandomHelper.GetDeathChance(father.Age - child.Age, father.Age, random);
             if (deathage.Item1)
             {

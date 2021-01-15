@@ -69,15 +69,57 @@ namespace BlazorWebApp.Shared.Helpers
         }
         public static Tuple<bool, int> GetDeathChance(int start, int age, Random random)
         {
-            int[] ints = new int[age-start];
-            double[] doubles = new double[age - start];
-            int counter = 0;
-            for (int i = 0; i < ints.Length; i++)
+            int[] ints = new int[150];
+            double[] doubles = new double[150];
+            if (age >=150)
             {
-                ints[i] = start+i;
-                doubles[i] = counter;
-                counter++;
+                return new Tuple<bool, int>(true,0);
             }
+
+            for (int i = start; i < 150; i++)
+            {
+                if (i < 14)
+                {
+                    ints[i] = i;
+                    doubles[i] = 3;
+                }
+                else if (i < 25)
+                {
+                    ints[i] = i;
+                    doubles[i] = 5;
+                }
+                else if (i < 40)
+                {
+                    ints[i] = i;
+                    doubles[i] = 8;
+                }
+                else if (i < 60)
+                {
+                    ints[i] = i;
+                    doubles[i] = 10;
+                }
+                else if (i < 80)
+                {
+                    ints[i] = i;
+                    doubles[i] = 15;
+                }
+                else if (i < 100)
+                {
+                    ints[i] = i;
+                    doubles[i] = 20;
+                }
+                else if (i < 130)
+                {
+                    ints[i] = i;
+                    doubles[i] = 50;
+                }
+                else if (i < 150)
+                {
+                    ints[i] = i;
+                    doubles[i] = 80;
+                }
+            }
+
             var deathage = GetRandomNumberFromArrayWithProbabilities(ints, doubles, random);
             if (deathage<=age)
             {

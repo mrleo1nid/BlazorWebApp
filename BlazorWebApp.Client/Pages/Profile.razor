@@ -173,7 +173,7 @@
     }
     private async Task RemovePawn(Guid pawnid)
     {
-        await IPawnApi.RemovePawn(pawnid);
+        await IPawnApi.RemovePawns(pawns);
         await UpdatePawns(true);
     }
     private void ShowModal()
