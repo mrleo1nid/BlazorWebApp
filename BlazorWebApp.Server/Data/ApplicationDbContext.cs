@@ -17,6 +17,7 @@ namespace BlazorWebApp.Server.Data
         public DbSet<Pawn> Pawns { get; set; }
         public DbSet<CharacterTrait> Traits { get; set; }
         public DbSet<Relation> Relations { get; set; }
+        public DbSet<WorkerJob> WorkerJobs { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)

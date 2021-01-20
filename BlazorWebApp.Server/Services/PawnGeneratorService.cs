@@ -39,8 +39,44 @@ namespace BlazorWebApp.Server.Services
             pawn.BloodType = GenerateBloodType();
             return pawn;
         }
-
-        public async Task<Tuple<Pawn,Pawn>> GenerateParents(Pawn child)
+       
+        public async Task<Pawn> CreateFather(Pawn child, RelationType type)
+        {
+            Pawn father = new Pawn();
+            father.Sex = Sex.Male;
+            father = await CreatePawnPatronim(father);
+            father.Resides = GenerateResides();
+            father.Orientation = GenerateSexualOrientation(father.Sex);
+            father.Age = RandomHelper.GetDiminishingChanceParentAge(child.Age + 25, 10, random);
+            father.DateofBirth = GenerateBirth(father.Age);
+            father.Traits = await GenerateTraits();
+            father.BloodType = GenerateBloodType();
+            if (type == RelationType.FosterFather)
+            {
+                father = await CreatePawnName(father);
+                father = await CreatePawnName(father);
+            }
+            else
+            {
+                father.Name = GetFatherName(child.Patronymic);
+                if (child.Sex == Sex.Female && child.Surname.EndsWith('а'))
+                {
+                    father.Surname = child.Surname.TrimEnd('а');
+                }
+                else
+                {
+                    father.Surname = child.Surname;
+                }
+            }
+            var deathage = RandomHelper.GetDeathChance(father.Age - child.Age, father.Age, random);
+            if (deathage.Item1)
+            {
+                father.IsLive = false;
+                father.DateOfDeath = GenerateBirth(deathage.Item2);
+            }
+            return father;
+        }
+        public async Task<Pawn> CreateMother(Pawn child, RelationType type)
         {
             Pawn mother = new Pawn();
             mother.Sex = Sex.Female;
@@ -53,41 +89,24 @@ namespace BlazorWebApp.Server.Services
             mother.DateofBirth = GenerateBirth(mother.Age);
             mother.Traits = await GenerateTraits();
             mother.BloodType = GenerateBloodType();
-            mother.FirstSurname = mother.Surname;
-            mother.Surname = child.Surname;
+          
+            if (type == RelationType.FosterMother)
+            {
+                mother.FirstSurname = mother.Surname;
+                mother = await CreatePawnSurName(mother);
+            }
+            else
+            {
+                mother.FirstSurname = mother.Surname;
+                mother.Surname = child.Surname;
+            }
             var deathage = RandomHelper.GetDeathChance(mother.Age - child.Age, mother.Age, random);
             if (deathage.Item1)
             {
                 mother.IsLive = false;
-                mother.DateOfDeath = GenerateBirth(mother.Age- deathage.Item2);
+                mother.DateOfDeath = GenerateBirth(mother.Age - deathage.Item2);
             }
-
-
-            Pawn father = new Pawn();
-            father.Sex = Sex.Male;
-            father.Name = GetFatherName(child.Patronymic);
-            father = await CreatePawnPatronim(father);
-            father.Resides = GenerateResides();
-            father.Orientation = GenerateSexualOrientation(father.Sex);
-            father.Age = RandomHelper.GetDiminishingChanceParentAge(child.Age + 25, 10, random);
-            father.DateofBirth = GenerateBirth(father.Age);
-            father.Traits = await GenerateTraits();
-            father.BloodType = GenerateBloodType();
-            if (child.Sex == Sex.Female && child.Surname.EndsWith('а'))
-            {
-                father.Surname = child.Surname.TrimEnd('а');
-            }
-            else
-            {
-                father.Surname = child.Surname;
-            }
-            deathage = RandomHelper.GetDeathChance(father.Age - child.Age, father.Age, random);
-            if (deathage.Item1)
-            {
-                father.IsLive = false;
-                father.DateOfDeath = GenerateBirth(deathage.Item2);
-            }
-            return new Tuple<Pawn, Pawn>(father, mother);
+            return mother;
         }
 
         public async Task LowOldName(string name)

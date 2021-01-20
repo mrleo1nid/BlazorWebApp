@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using BlazorWebApp.Server.Data;
 using BlazorWebApp.Server.Services;
 using BlazorWebApp.Shared.Auth;
+using BlazorWebApp.Shared.Helpers;
 using BlazorWebApp.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -51,32 +52,18 @@ namespace BlazorWebApp.Server.Controllers
         [HttpPost]
         public async Task CreateRandom()
         {
+            var random = new Random();
             var user = await _userManager.GetUserAsync(HttpContext.User);
             var world = await _userManager.FindByEmailAsync("world@world.world");
             Pawn pawn = await _pawnGenerator.GenerateRandomPawn();
             pawn.UserId = user.Id;
             pawn.User = user;
-            var parents = await _pawnGenerator.GenerateParents(pawn);
-            var father = parents.Item1;
-            var mother = parents.Item2;
-            father.User = world;
-            father.UserId = world.Id;
-            mother.User = world;
-            mother.UserId = world.Id;
-            await _context.Pawns.AddAsync(father);
-            await _context.Pawns.AddAsync(mother);
             await _context.Pawns.AddAsync(pawn);
-            await _context.SaveChangesAsync();
-            await _context.Relations.AddRangeAsync(new List<Relation>()
+            await _context.WorkerJobs.AddRangeAsync(new List<WorkerJob>()
             {
-                new Relation(){PawnId = pawn.Id, RelationPawnId = father.Id, RelationType = RelationType.Father},
-                new Relation(){PawnId = pawn.Id, RelationPawnId = mother.Id, RelationType = RelationType.Mother},
-                new Relation(){PawnId = father.Id, RelationPawnId = pawn.Id, RelationType = RelationType.Child},
-                new Relation(){PawnId = mother.Id, RelationPawnId = pawn.Id, RelationType = RelationType.Child},
-                new Relation(){PawnId = father.Id, RelationPawnId = mother.Id, RelationType = RelationType.Spouse},
-                new Relation(){PawnId = mother.Id, RelationPawnId = father.Id, RelationType = RelationType.Spouse}
+                new WorkerJob(){PawnId = pawn.Id, WorkerJobType = WorkerJobType.CreateParents},
+                new WorkerJob(){PawnId = pawn.Id, WorkerJobType = WorkerJobType.CreateOthenRelations}
             });
-
             await _context.SaveChangesAsync();
         }
         [Authorize]

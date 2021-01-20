@@ -8,22 +8,35 @@ namespace BlazorWebApp.Shared.Helpers
 {
     public static class RandomHelper
     {
-        public static T GetRandomObj<T>(Random random,List<T> list)
+        public static RelationType GetFatherType(Random random)
         {
-            return list.ElementAt(random.Next(list.Count));
+            int[] ints = new int[2];
+            double[] doubles = new double[2];
+            ints[0] = (int) RelationType.BiologicalFather;
+            doubles[0] = 95;
+            ints[1] = (int)RelationType.FosterFather;
+            doubles[1] = 5;
+            return (RelationType) GetRandomNumberFromArrayWithProbabilities(ints, doubles, random);
         }
-
-        public static bool GetRandomBool(Random random)
+        public static RelationType GetMotherType(Random random)
         {
-            var res = random.Next(100);
-            if (res > 50) return true;
-            else return false;
+            int[] ints = new int[2];
+            double[] doubles = new double[2];
+            ints[0] = (int)RelationType.BiologicalFather;
+            doubles[0] = 95;
+            ints[1] = (int)RelationType.FosterFather;
+            doubles[1] = 5;
+            return (RelationType)GetRandomNumberFromArrayWithProbabilities(ints, doubles, random);
         }
-
-        public static Sex GetRandomSex(Random random)
+        public static RelationType GetSpouseOrEx(Random random)
         {
-            if (GetRandomBool(random)) return Sex.Female;
-            else return Sex.Male;
+            int[] ints = new int[2];
+            double[] doubles = new double[2];
+            ints[0] = (int)RelationType.Spouse;
+            doubles[0] = 30;
+            ints[1] = (int)RelationType.Ex;
+            doubles[1] = 70;
+            return (RelationType)GetRandomNumberFromArrayWithProbabilities(ints, doubles, random);
         }
         /// <summary>
         /// Возвращает случайное число из массива vals с вероятностью из массива probs

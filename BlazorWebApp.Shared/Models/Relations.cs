@@ -23,8 +23,8 @@ namespace BlazorWebApp.Shared.Models
 
     public enum RelationType
     {
-        Father = 0,
-        Mother = 1,
+        BiologicalFather = 0,
+        BiologicalMother = 1,
         Child =2,
         Frend = 3,
         Lover = 4,
@@ -33,6 +33,7 @@ namespace BlazorWebApp.Shared.Models
         FosterFather = 7,
         BestFrend =8,
         Ex = 9,
-        Spouse = 10
+        Spouse = 10,
+        FosterMother = 11
     }
 }
